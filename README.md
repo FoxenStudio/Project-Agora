@@ -8,4 +8,4 @@ Minimalist P2P communication suite by Foxen Studio. Secure, serverless, and untr
 4. Close to wipe session.
 
 ---
-**Xsgdwh Srrq!**
+**Xsgdwh Vrrq!**
