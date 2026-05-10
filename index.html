@@ -67,6 +67,20 @@
   --border:    rgba(100,160,255,0.06);
   --scanline:  rgba(100,160,255,0.02);
 }
+[data-theme="snowfox"] {
+  --accent:    #4a9ebb;
+  --accent-dk: #c8e6f0;
+  --accent-dm: #3a8aaa;
+  --bg:        #f5f0eb;
+  --bg2:       #ede8e2;
+  --red:       #cc4455;
+  --yellow:    #aa8833;
+  --cyan:      #3a8aaa;
+  --text:      rgba(40,55,70,0.85);
+  --text-dim:  rgba(60,80,100,0.35);
+  --border:    rgba(74,158,187,0.15);
+  --scanline:  rgba(74,158,187,0.015);
+}
 [data-theme="blood"] {
   --accent:    #ff2244;
   --accent-dk: #2a0008;
@@ -479,6 +493,7 @@ body::before {
 .d-theme-btn[data-t="amber"]    { background:#ffb300; }
 .d-theme-btn[data-t="ice"]      { background:#88ccff; }
 .d-theme-btn[data-t="blood"]    { background:#ff2244; }
+.d-theme-btn[data-t="snowfox"]  { background:linear-gradient(135deg,#f5f0eb 50%,#4a9ebb 50%); border:1px solid #ccc; }
 
 /* ── TOAST ── */
 #toast-wrap {
@@ -547,6 +562,49 @@ body::before {
   #msg-in { font-size:16px; }
   #drawer { width:85%; }
 }
+
+.hl-btn {
+  background:transparent;
+  border:1px solid var(--border, rgba(255,255,255,0.08));
+  color:var(--text-dim, rgba(255,255,255,0.3));
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px; padding:4px 10px;
+  cursor:pointer; letter-spacing:2px;
+  transition:all .15s;
+}
+.hl-btn:hover, .hl-btn.active {
+  border-color:var(--accent, #00ff41);
+  color:var(--accent, #00ff41);
+}
+.help-section { margin-bottom:20px; }
+.help-title {
+  font-family:'VT323',monospace;
+  font-size:20px;
+  color:var(--accent,#00ff41);
+  letter-spacing:2px;
+  margin-bottom:10px;
+  border-bottom:1px solid var(--border,rgba(255,255,255,0.06));
+  padding-bottom:6px;
+}
+.help-step {
+  display:flex; gap:10px; margin-bottom:8px;
+  font-size:12px; color:var(--text,rgba(255,255,255,0.7));
+  line-height:1.6;
+}
+.help-num {
+  color:var(--accent,#00ff41);
+  flex-shrink:0; font-size:11px;
+  opacity:.7;
+}
+.help-note {
+  font-size:10px;
+  color:var(--text-dim,rgba(255,255,255,0.3));
+  border-left:1px solid var(--border,rgba(255,255,255,0.06));
+  padding-left:10px;
+  margin-top:6px;
+  line-height:1.7;
+}
+
 </style>
 </head>
 <body>
@@ -579,6 +637,10 @@ body::before {
 
     <div class="l-status" id="l-st"></div>
   </div>
+  <div style="margin-top:16px;text-align:center">
+    <button onclick="openHelp()" style="background:transparent;border:none;color:var(--text-dim,rgba(255,255,255,0.2));font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:2px;padding:4px 8px;transition:color .2s"
+    onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim,rgba(255,255,255,0.2))'">? HOW TO USE</button>
+  </div>
 </div>
 
 <!-- OVERLAY -->
@@ -602,8 +664,8 @@ body::before {
 <!-- ROOM NOT FOUND -->
 <div id="s-notfound" class="screen" style="gap:16px">
   <div style="font-family:'VT323',monospace;font-size:48px;color:var(--red);letter-spacing:4px;opacity:.7">[404]</div>
-  <div style="font-family:'VT323',monospace;font-size:26px;letter-spacing:3px;color:rgba(255,255,255,0.6)">ROOM NOT FOUND</div>
-  <div id="notfound-sub" style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px;text-align:center">There is no active room with this room code.</div>
+  <div style="font-family:'VT323',monospace;font-size:26px;letter-spacing:3px;color:rgba(255,255,255,0.6)">ODA BULUNAMADI</div>
+  <div id="notfound-sub" style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px;text-align:center">Bu oda kodu ile aktif bir oda yok.</div>
   <button onclick="notFoundBack()" style="
     margin-top:12px;
     background:transparent;
@@ -616,7 +678,7 @@ body::before {
   "
   onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
   onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.35)'">
-    RETURN TO MAIN MENU
+    ANA MENÜYE DÖN
   </button>
 </div>
 
@@ -665,6 +727,7 @@ body::before {
       <button class="d-theme-btn"        data-t="amber"    onclick="setTheme('amber')"    title="Amber"></button>
       <button class="d-theme-btn"        data-t="ice"      onclick="setTheme('ice')"      title="Ice"></button>
       <button class="d-theme-btn"        data-t="blood"    onclick="setTheme('blood')"    title="Blood"></button>
+      <button class="d-theme-btn"        data-t="snowfox"  onclick="setTheme('snowfox')"  title="Snow Fox"></button>
     </div>
 
     <div class="d-divider"></div>
@@ -2447,7 +2510,7 @@ function scheduleFade() {
 // ── ROOM NOT FOUND ────────────────────────────────────────
 function showRoomNotFound(msg) {
   const sub = document.getElementById('notfound-sub');
-  if (sub) sub.textContent = msg || 'There is no active room with this room code.';
+  if (sub) sub.textContent = msg || 'Bu oda kodu ile aktif bir oda yok.';
   showScreen('s-notfound');
 }
 
@@ -2455,6 +2518,213 @@ function notFoundBack() {
   showScreen('s-lobby');
   document.getElementById('l-code').value = '';
   document.getElementById('l-user').focus();
+}
+
+
+// ── HELP MODAL ────────────────────────────────────────────
+const HELP_CONTENT = {
+  en: {
+    title: 'HOW TO USE AGORA',
+    sections: [
+      {
+        heading: 'GETTING STARTED',
+        steps: [
+          'Enter a username — this is how others will see you.',
+          'Click CREATE NEW ROOM to start a private room. You will be the host.',
+          'Share the room code with people you trust.',
+          'Others click JOIN ROOM and enter the code to connect.',
+        ],
+        note: 'No account needed. No data stored. Session ends when you close the tab.'
+      },
+      {
+        heading: 'SECURITY',
+        steps: [
+          'All messages are E2E encrypted (RSA-2048 + AES-256-GCM).',
+          'No server reads your messages — only peers in the room can decrypt them.',
+          'WebRTC may expose your IP to other peers. Use a VPN for full anonymity.',
+          'Check the fingerprint [ENC:xxxx] in the user list to verify identities.',
+        ],
+        note: 'Burn timer removes messages from screen only — peers can still screenshot.'
+      },
+      {
+        heading: 'COMMANDS',
+        steps: [
+          '/burn <sec> — auto-delete messages after N seconds.',
+          "/mute <user> — hide a user's messages locally.",
+          '/msg <user> <text> — send a private encrypted DM.',
+          'Host commands: /set lock, /set pass, /set roomcode r',
+        ],
+        note: 'Open the drawer menu (top left) for all options.'
+      }
+    ]
+  },
+  tr: {
+    title: 'AGORA NASIL KULLANILIR',
+    sections: [
+      {
+        heading: 'BAŞLARKEN',
+        steps: [
+          'Bir kullanıcı adı gir — diğerleri seni bu isimle görecek.',
+          'ODA OLUŞTUR butonuna tıkla. Oda sahibi (host) sen olursun.',
+          'Oda kodunu güvendiğin kişilerle paylaş.',
+          "Diğerleri ODA'YA KATIL seçeneğiyle kodu girerek bağlanır.",
+        ],
+        note: 'Hesap gerekmez. Veri saklanmaz. Sekmeyi kapattığında oturum sona erer.'
+      },
+      {
+        heading: 'GÜVENLİK',
+        steps: [
+          'Tüm mesajlar uçtan uca şifreli (RSA-2048 + AES-256-GCM).',
+          'Hiçbir sunucu mesajlarını okuyamaz — sadece odadaki kullanıcılar çözebilir.',
+          'WebRTC, IP adresini diğer kullanıcılara açık edebilir. Tam anonimlik için VPN kullan.',
+          'Kullanıcı listesindeki parmak izi [ENC:xxxx] ile kimlikleri doğrula.',
+        ],
+        note: 'Burn timer mesajları yalnızca ekrandan siler — karşı taraf hâlâ ekran görüntüsü alabilir.'
+      },
+      {
+        heading: 'KOMUTLAR',
+        steps: [
+          '/burn <saniye> — mesajları N saniye sonra otomatik sil.',
+          '/mute <kullanıcı> — bir kullanıcının mesajlarını yerel olarak gizle.',
+          '/msg <kullanıcı> <metin> — şifreli özel mesaj gönder.',
+          'Host komutları: /set lock, /set pass, /set roomcode r',
+        ],
+        note: 'Tüm seçenekler için sol üstteki çekmece menüsünü aç.'
+      }
+    ]
+  },
+  ja: {
+    title: 'AGORAの使い方',
+    sections: [
+      {
+        heading: 'はじめに',
+        steps: [
+          'ユーザー名を入力してください — 他のユーザーに表示される名前です。',
+          '「部屋を作成」をクリックしてプライベートルームを開始します。あなたがホストになります。',
+          '信頼できる人にルームコードを共有してください。',
+          '他の人は「部屋に参加」でコードを入力して接続します。',
+        ],
+        note: 'アカウント不要。データは保存されません。タブを閉じるとセッションが終了します。'
+      },
+      {
+        heading: 'セキュリティ',
+        steps: [
+          'すべてのメッセージはE2E暗号化されています（RSA-2048 + AES-256-GCM）。',
+          'サーバーはメッセージを読めません — 部屋の参加者のみ復号できます。',
+          'WebRTCにより他の参加者にIPアドレスが見える場合があります。完全な匿名性にはVPNを使用してください。',
+          'ユーザーリストのフィンガープリント [ENC:xxxx] で本人確認ができます。',
+        ],
+        note: 'バーンタイマーは画面からのみメッセージを削除します — スクリーンショットは防げません。'
+      },
+      {
+        heading: 'コマンド',
+        steps: [
+          '/burn <秒> — N秒後にメッセージを自動削除。',
+          '/mute <ユーザー> — そのユーザーのメッセージをローカルで非表示。',
+          '/msg <ユーザー> <テキスト> — 暗号化されたDMを送信。',
+          'ホストコマンド: /set lock, /set pass, /set roomcode r',
+        ],
+        note: '左上のドロワーメニューからすべてのオプションにアクセスできます。'
+      }
+    ]
+  },
+  zh: {
+    title: 'AGORA使用指南',
+    sections: [
+      {
+        heading: '开始使用',
+        steps: [
+          '输入用户名 — 这是其他人看到你的名字。',
+          '点击"创建房间"开始私人房间。你将成为房主。',
+          '将房间码分享给你信任的人。',
+          '其他人点击"加入房间"并输入房间码即可连接。',
+        ],
+        note: '无需账号。不存储任何数据。关闭标签页后会话结束。'
+      },
+      {
+        heading: '安全性',
+        steps: [
+          '所有消息均采用端对端加密（RSA-2048 + AES-256-GCM）。',
+          '服务器无法读取消息 — 只有房间内的用户才能解密。',
+          'WebRTC可能会将你的IP地址暴露给其他用户。如需完全匿名，请使用VPN。',
+          '通过用户列表中的指纹 [ENC:xxxx] 验证身份。',
+        ],
+        note: '销毁计时器仅从屏幕删除消息 — 对方仍可截图保存。'
+      },
+      {
+        heading: '命令',
+        steps: [
+          '/burn <秒> — N秒后自动删除消息。',
+          '/mute <用户> — 在本地隐藏某用户的消息。',
+          '/msg <用户> <文本> — 发送加密私信。',
+          '房主命令: /set lock, /set pass, /set roomcode r',
+        ],
+        note: '点击左上角抽屉菜单查看所有选项。'
+      }
+    ]
+  }
+};
+
+let currentHelpLang = 'en';
+
+function openHelp() {
+  document.getElementById('help-overlay').style.display = 'flex';
+  renderHelp(currentHelpLang);
+}
+
+function closeHelp() {
+  document.getElementById('help-overlay').style.display = 'none';
+}
+
+function setHelpLang(lang) {
+  currentHelpLang = lang;
+  document.querySelectorAll('.hl-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('hl-'+lang);
+  if (btn) btn.classList.add('active');
+  renderHelp(lang);
+}
+
+function renderHelp(lang) {
+  const data = HELP_CONTENT[lang];
+  if (!data) return;
+  const box = document.getElementById('help-content');
+  box.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-family:VT323,monospace;font-size:24px;color:var(--accent,#00ff41);letter-spacing:3px;margin-bottom:18px';
+  title.textContent = data.title;
+  box.appendChild(title);
+
+  data.sections.forEach(sec => {
+    const section = document.createElement('div');
+    section.className = 'help-section';
+
+    const heading = document.createElement('div');
+    heading.className = 'help-title';
+    heading.textContent = sec.heading;
+    section.appendChild(heading);
+
+    sec.steps.forEach((step, i) => {
+      const row = document.createElement('div');
+      row.className = 'help-step';
+      const num = document.createElement('span');
+      num.className = 'help-num';
+      num.textContent = (i+1)+'.';
+      const txt = document.createElement('span');
+      txt.textContent = step;
+      row.appendChild(num); row.appendChild(txt);
+      section.appendChild(row);
+    });
+
+    if (sec.note) {
+      const note = document.createElement('div');
+      note.className = 'help-note';
+      note.textContent = sec.note;
+      section.appendChild(note);
+    }
+
+    box.appendChild(section);
+  });
 }
 
 // ── BLACK FLASH ───────────────────────────────────────────
@@ -2503,5 +2773,23 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <div id="flash"></div>
+
+<!-- HELP MODAL -->
+<div id="help-overlay" onclick="if(event.target===this)closeHelp()" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px)">
+  <div style="background:var(--bg2,#0a0a0a);border:1px solid var(--border,rgba(255,255,255,0.08));padding:28px;width:100%;max-width:480px;margin:auto;position:relative">
+
+    <!-- Lang selector -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button onclick="setHelpLang('en')" id="hl-en" class="hl-btn active">EN</button>
+      <button onclick="setHelpLang('tr')" id="hl-tr" class="hl-btn">TR</button>
+      <button onclick="setHelpLang('ja')" id="hl-ja" class="hl-btn">JA</button>
+      <button onclick="setHelpLang('zh')" id="hl-zh" class="hl-btn">ZH</button>
+      <button onclick="closeHelp()" style="margin-left:auto;background:transparent;border:1px solid var(--border,rgba(255,255,255,0.08));color:var(--text-dim,rgba(255,255,255,0.3));font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 10px;cursor:pointer;letter-spacing:1px">✕</button>
+    </div>
+
+    <div id="help-content"></div>
+  </div>
+</div>
+
 </body>
 </html>
