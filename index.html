@@ -1,0 +1,2960 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="ghost">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AGORA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+/* ═══════════════════════════════════════
+   THEMES
+═══════════════════════════════════════ */
+[data-theme="ghost"] {
+  --accent:    #00ff41;
+  --accent-dk: #003b00;
+  --accent-dm: #00aa2a;
+  --bg:        #000000;
+  --bg2:       rgba(5,5,5,0.97);
+  --red:       #ff3333;
+  --yellow:    #ffcc00;
+  --cyan:      #00ffff;
+  --text:      rgba(255,255,255,0.75);
+  --text-dim:  rgba(255,255,255,0.2);
+  --border:    rgba(255,255,255,0.04);
+  --scanline:  rgba(0,0,0,0.04);
+}
+[data-theme="terminal"] {
+  --accent:    #00ff41;
+  --accent-dk: #003b00;
+  --accent-dm: #00aa2a;
+  --bg:        #0a0a0a;
+  --bg2:       #0d0d0d;
+  --red:       #ff3333;
+  --yellow:    #ffcc00;
+  --cyan:      #00ffff;
+  --text:      #00cc33;
+  --text-dim:  #004d15;
+  --border:    #003b00;
+  --scanline:  rgba(0,0,0,0.07);
+}
+[data-theme="amber"] {
+  --accent:    #ffb300;
+  --accent-dk: #3d2a00;
+  --accent-dm: #cc8800;
+  --bg:        #0a0800;
+  --bg2:       #0d0b00;
+  --red:       #ff4400;
+  --yellow:    #ffdd00;
+  --cyan:      #ffcc44;
+  --text:      #cc8800;
+  --text-dim:  #3d2a00;
+  --border:    #2a1e00;
+  --scanline:  rgba(255,140,0,0.03);
+}
+[data-theme="ice"] {
+  --accent:    #88ccff;
+  --accent-dk: #0a1a2a;
+  --accent-dm: #4499cc;
+  --bg:        #050810;
+  --bg2:       #070a14;
+  --red:       #ff6688;
+  --yellow:    #aaddff;
+  --cyan:      #cceeff;
+  --text:      rgba(180,220,255,0.75);
+  --text-dim:  rgba(100,160,220,0.2);
+  --border:    rgba(100,160,255,0.06);
+  --scanline:  rgba(100,160,255,0.02);
+}
+[data-theme="snowfox"] {
+  --accent:    #4a9ebb;
+  --accent-dk: #c8e6f0;
+  --accent-dm: #3a8aaa;
+  --bg:        #f5f0eb;
+  --bg2:       #ede8e2;
+  --red:       #cc4455;
+  --yellow:    #aa8833;
+  --cyan:      #3a8aaa;
+  --text:      rgba(40,55,70,0.85);
+  --text-dim:  rgba(60,80,100,0.35);
+  --border:    rgba(74,158,187,0.15);
+  --scanline:  rgba(74,158,187,0.015);
+}
+[data-theme="blood"] {
+  --accent:    #ff2244;
+  --accent-dk: #2a0008;
+  --accent-dm: #cc1133;
+  --bg:        #080004;
+  --bg2:       #0d0006;
+  --red:       #ff4466;
+  --yellow:    #ff8833;
+  --cyan:      #ff6655;
+  --text:      rgba(255,100,120,0.75);
+  --text-dim:  rgba(180,20,40,0.3);
+  --border:    rgba(180,0,30,0.08);
+  --scanline:  rgba(180,0,20,0.04);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background .4s, color .4s;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,var(--scanline) 3px,var(--scanline) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* ── RAINBOW HOST TAG ── */
+.rainbow-tag {
+  background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-move 3s linear infinite;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+@keyframes rainbow-move {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes fadeOut  { from{opacity:1} to{opacity:0} }
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes shake    { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-1px,1px)} 75%{transform:translate(1px,-1px)} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes drawerIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+@keyframes toastIn  { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.6} }
+@keyframes connBar { 0%{width:0%;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0%;margin-left:100%} }
+
+@keyframes glowPulse{ 0%,100%{text-shadow:0 0 8px var(--accent),0 0 20px var(--accent)} 50%{text-shadow:0 0 4px var(--accent)} }
+
+.shake { animation:shake .18s; }
+
+/* ── BLACK FLASH TRANSITION ── */
+#flash {
+  position:fixed; inset:0;
+  background:#000;
+  z-index:9000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease;
+}
+#flash.in  { opacity:1; pointer-events:all; }
+
+/* ── SCREENS ── */
+.screen {
+  position:fixed; inset:0;
+  background:var(--bg);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:100;
+}
+.screen.active { display:flex; }
+
+/* ── BOOT ── */
+#s-boot { gap:0; justify-content:center; align-items:center; }
+#boot-studio {
+  font-family:'VT323', monospace;
+  font-size:clamp(14px,3vw,22px);
+  color:var(--accent-dm);
+  letter-spacing:6px;
+  animation:pulse 2s infinite;
+}
+#boot-bar {
+  margin-top:16px;
+  width:180px;
+  height:1px;
+  background:var(--border);
+  overflow:hidden;
+}
+#boot-bar-fill {
+  height:100%;
+  background:var(--accent);
+  width:0%;
+  transition:width .05s linear;
+  box-shadow:0 0 6px var(--accent);
+}
+
+/* ── LOBBY ── */
+#s-lobby { gap:0; }
+.lobby-logo {
+  font-family:'VT323', monospace;
+  font-size:clamp(48px,10vw,88px);
+  color:var(--accent);
+  letter-spacing:10px;
+  animation:glowPulse 4s infinite;
+  margin-bottom:4px;
+}
+.lobby-tagline {
+  font-size:9px;
+  color:var(--text-dim);
+  letter-spacing:4px;
+  margin-bottom:36px;
+}
+.lobby-form {
+  width:100%;
+  max-width:340px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.l-label {
+  font-size:9px;
+  color:var(--text-dim);
+  letter-spacing:3px;
+  margin-bottom:6px;
+  margin-top:20px;
+}
+.l-input {
+  background:transparent;
+  border:none;
+  border-bottom:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono', monospace;
+  font-size:15px;
+  padding:6px 0;
+  width:100%;
+  outline:none;
+  -webkit-appearance:none;
+  transition:border-color .2s;
+}
+.l-input::placeholder { color:var(--text-dim); }
+.l-input:focus { border-bottom-color:var(--accent); }
+.l-divider {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:24px;
+  margin-bottom:4px;
+}
+.l-divider-line { flex:1; height:1px; background:var(--border); }
+.l-divider-text { font-size:9px; color:var(--text-dim); letter-spacing:2px; }
+.l-btn {
+  margin-top:14px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-dim);
+  font-family:'Share Tech Mono', monospace;
+  font-size:11px;
+  letter-spacing:3px;
+  padding:10px;
+  cursor:pointer;
+  width:100%;
+  transition:all .2s;
+}
+.l-btn:hover {
+  border-color:var(--accent);
+  color:var(--accent);
+  box-shadow:0 0 12px rgba(0,0,0,0) inset, 0 0 8px var(--accent-dk);
+}
+.l-btn.primary {
+  border-color:var(--accent-dm);
+  color:var(--accent-dm);
+}
+.l-btn.primary:hover {
+  background:var(--accent);
+  color:var(--bg);
+  border-color:var(--accent);
+}
+.l-status { font-size:10px; min-height:14px; margin-top:10px; text-align:center; }
+.l-status.ok  { color:var(--accent-dm); }
+.l-status.err { color:var(--red); }
+
+/* pass wrap */
+.pass-wrap { position:relative; width:100%; }
+.pass-wrap .l-input { padding-right:36px; }
+.pass-eye {
+  position:absolute; right:0; top:6px;
+  background:none; border:none;
+  color:var(--text-dim); cursor:pointer;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+}
+.pass-eye:hover { color:var(--accent); }
+
+/* ── OVERLAY ── */
+#s-overlay { gap:14px; }
+.ov-icon  { font-size:40px; color:var(--accent); animation:glowPulse 2s infinite; }
+.ov-title { font-family:'VT323',monospace; font-size:26px; letter-spacing:3px; color:var(--text); }
+.ov-sub   { font-size:11px; color:var(--text-dim); letter-spacing:1px; }
+.ov-btn   { margin-top:8px; }
+
+/* ── GHOST CHAT ── */
+#s-chat {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  display:none; flex-direction:column;
+  align-items:stretch; padding:0; overflow:hidden; width:100%;
+}
+#s-chat.active { display:flex; }
+
+#messages {
+  flex:1; overflow-y:auto;
+  padding:20px 18px 72px;
+  display:flex; flex-direction:column; gap:0;
+  scrollbar-width:none; min-height:0;
+  -webkit-overflow-scrolling:touch;
+}
+#messages::-webkit-scrollbar { display:none; }
+
+.msg {
+  font-size:13px; line-height:1.65;
+  word-break:break-word; padding:1px 0;
+  animation:fadeIn .15s forwards;
+  transition:opacity 10s ease;
+}
+.msg.faded { opacity:.15; }
+.msg .ts  { color:var(--text-dim); font-size:9px; margin-right:5px; opacity:.4; user-select:none; }
+.msg .who { color:var(--text-dim); font-size:12px; }
+.msg.own .who { color:var(--accent); opacity:.8; }
+.msg.sys  { color:var(--text-dim); font-size:11px; font-style:italic; }
+.msg.sys.ok   { color:var(--accent-dm); opacity:.6; }
+.msg.sys.warn { color:var(--yellow); opacity:.5; }
+.msg.sys.err  { color:var(--red); opacity:.6; }
+.msg.dm   { color:var(--cyan); opacity:.8; }
+.msg.dm .who { color:var(--cyan); opacity:.7; }
+.msg.pin  { color:var(--yellow); opacity:.6; border-left:1px solid var(--yellow); padding-left:8px; }
+.burn-tag { color:var(--red); font-size:9px; margin-left:4px; opacity:.5; }
+
+/* ghost input */
+#ghost-input-wrap {
+  position:fixed; bottom:0; left:0; right:0;
+  padding:14px 18px;
+  background:linear-gradient(transparent, var(--bg) 60%);
+  display:flex; align-items:center; gap:8px; z-index:50;
+}
+#ghost-cursor {
+  color:var(--accent); font-size:14px; opacity:.5; flex-shrink:0;
+  animation:blink 1.2s infinite;
+}
+#msg-in {
+  flex:1; background:transparent; border:none;
+  border-bottom:1px solid transparent;
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace; font-size:14px;
+  outline:none; caret-color:var(--accent);
+  transition:border-color .3s; padding-bottom:3px;
+  -webkit-appearance:none;
+}
+#msg-in:focus { border-bottom-color:var(--border); }
+#msg-in::placeholder { color:transparent; }
+#msg-in:disabled { opacity:.3; cursor:not-allowed; }
+
+#btn-file-send {
+  background:transparent; border:1px solid var(--border); color:var(--text-dim);
+  font-family:'Share Tech Mono',monospace; font-size:12px; padding:4px 8px; cursor:pointer;
+  transition:all .2s; border-radius:2px;
+}
+#btn-file-send:hover { border-color:var(--accent); color:var(--accent); }
+
+.enc-spin {
+  width:8px; height:8px;
+  border:1px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .5s linear infinite;
+  flex-shrink:0; display:none;
+}
+
+#cd-bar  { position:fixed; bottom:0; left:0; right:0; height:1px; overflow:hidden; display:none; z-index:51; }
+#cd-fill { height:100%; background:var(--accent); width:100%; opacity:.3; transition:width .05s linear; }
+
+/* ── DRAWER TRIGGER ── */
+#drawer-trigger {
+  position:fixed; top:14px; left:14px;
+  width:28px; height:28px;
+  cursor:pointer; z-index:200;
+  display:flex; flex-direction:column;
+  justify-content:center; gap:4px; padding:4px;
+  opacity:.2; transition:opacity .3s;
+}
+#drawer-trigger:hover { opacity:.7; }
+#drawer-trigger span {
+  display:block; height:1px;
+  background:var(--accent);
+  transition:all .25s;
+}
+#drawer-trigger.open { opacity:.8; }
+#drawer-trigger.open span:nth-child(1) { transform:rotate(45deg) translate(3px,3px); }
+#drawer-trigger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+#drawer-trigger.open span:nth-child(3) { transform:rotate(-45deg) translate(3px,-3px); }
+
+/* ── DRAWER ── */
+#drawer {
+  position:fixed; top:0; left:0;
+  width:280px; height:100dvh;
+  background:#0a0a0a;
+  border-right:1px solid rgba(255,255,255,0.06);
+  z-index:190;
+  display:flex; flex-direction:column;
+  transform:translateX(-100%);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto; overflow-x:hidden;
+}
+#drawer.open { transform:translateX(0); }
+
+#drawer-overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:180; display:none; opacity:0;
+  transition:opacity .25s;
+}
+#drawer-overlay.open { display:block; opacity:1; }
+
+/* DRAWER HEADER */
+.d-header {
+  padding:48px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.02);
+}
+.d-roomcode {
+  font-size:9px; color:rgba(255,255,255,0.25);
+  letter-spacing:3px; margin-bottom:8px;
+  text-transform:uppercase;
+}
+.d-username {
+  font-size:16px; color:rgba(255,255,255,0.85);
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  font-weight:400;
+}
+.d-badge {
+  font-size:8px; border:1px solid currentColor;
+  padding:2px 5px; letter-spacing:1px;
+  border-radius:2px;
+}
+.d-badge.admin  { color:var(--yellow); }
+.d-badge.mod    { color:var(--red); }
+.d-badge.locked { color:var(--red); }
+.d-badge.pass   { color:var(--cyan); }
+.d-enc {
+  font-size:9px; color:rgba(255,255,255,0.2);
+  margin-top:6px; letter-spacing:1px;
+}
+.d-enc.on { color:var(--accent); opacity:.9; }
+
+/* SECTIONS */
+.d-section {
+  padding:16px 20px 6px;
+  font-size:9px; color:rgba(255,255,255,0.25);
+  letter-spacing:3px; text-transform:uppercase;
+}
+
+/* BUTTONS */
+.d-btn {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 20px; cursor:pointer;
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px; color:rgba(255,255,255,0.45);
+  background:transparent; border:none; border-left:2px solid transparent;
+  width:100%; text-align:left;
+  transition:all .15s; letter-spacing:.3px;
+}
+.d-btn:hover {
+  color:rgba(255,255,255,0.85);
+  background:rgba(255,255,255,0.04);
+  border-left-color:var(--accent);
+}
+.d-btn.danger:hover { color:var(--red); border-left-color:var(--red); }
+.d-btn .di {
+  font-size:13px; width:18px; flex-shrink:0;
+  opacity:.35; font-style:normal;
+  color:var(--accent);
+}
+.d-btn:hover .di { opacity:.9; }
+.d-divider { height:1px; background:rgba(255,255,255,0.05); margin:6px 0; }
+
+/* USERS IN DRAWER */
+#d-users { padding:4px 20px 10px; }
+.du-row {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:11px; color:rgba(255,255,255,0.45);
+}
+.du-row:last-child { border-bottom:none; }
+.du-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--accent); flex-shrink:0;
+  box-shadow:0 0 4px var(--accent);
+}
+.du-name { flex:1; color:rgba(255,255,255,0.7); }
+.du-fp { font-size:8px; color:rgba(255,255,255,0.2); font-family:monospace; }
+
+/* THEME SWITCHER */
+.d-themes {
+  display:flex; gap:8px;
+  padding:8px 20px 14px;
+  flex-wrap:wrap; align-items:center;
+}
+.d-theme-btn {
+  width:24px; height:24px; border-radius:50%;
+  border:2px solid transparent;
+  cursor:pointer; transition:all .2s;
+  flex-shrink:0;
+}
+.d-theme-btn:hover { transform:scale(1.2); }
+.d-theme-btn.active { border-color:rgba(255,255,255,0.6); box-shadow:0 0 6px currentColor; }
+.d-theme-btn[data-t="ghost"]    { background:#00ff41; }
+.d-theme-btn[data-t="terminal"] { background:#00cc33; }
+.d-theme-btn[data-t="amber"]    { background:#ffb300; }
+.d-theme-btn[data-t="ice"]      { background:#88ccff; }
+.d-theme-btn[data-t="blood"]    { background:#ff2244; }
+.d-theme-btn[data-t="snowfox"]  { background:linear-gradient(135deg,#f5f0eb 50%,#4a9ebb 50%); border:1px solid #ccc; }
+
+/* ── TOAST ── */
+#toast-wrap {
+  position:fixed; top:14px; left:50%; transform:translateX(-50%);
+  z-index:500; display:flex; flex-direction:column;
+  align-items:center; gap:5px; pointer-events:none;
+}
+.toast {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:7px 14px; font-size:10px; color:var(--text-dim);
+  letter-spacing:.5px; animation:toastIn .2s forwards;
+  white-space:nowrap; backdrop-filter:blur(8px);
+}
+.toast.ok   { color:var(--accent); border-color:var(--accent-dk); }
+.toast.warn { color:var(--yellow); border-color:rgba(255,204,0,.1); }
+.toast.err  { color:var(--red);    border-color:rgba(255,51,51,.1); }
+
+/* ── POPUP ── */
+#popup-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.6);
+  z-index:400; display:none;
+  align-items:center; justify-content:center;
+  backdrop-filter:blur(4px);
+}
+#popup-overlay.active { display:flex; }
+#popup {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:22px 24px; width:100%; max-width:300px;
+  animation:drawerIn .2s forwards;
+}
+#popup-title {
+  font-family:'VT323',monospace; font-size:18px;
+  color:var(--text-dim); letter-spacing:2px; margin-bottom:12px;
+}
+#popup-input {
+  background:transparent; border:none;
+  border-bottom:1px solid var(--border);
+  color:var(--text); font-family:'Share Tech Mono',monospace;
+  font-size:14px; padding:5px 0; width:100%;
+  outline:none; margin-bottom:14px; -webkit-appearance:none;
+}
+#popup-input::placeholder { color:var(--text-dim); opacity:.4; }
+#popup-input:focus { border-bottom-color:var(--accent); }
+.p-btns { display:flex; gap:8px; }
+.p-btn {
+  flex:1; background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-dim); font-family:'Share Tech Mono',monospace;
+  font-size:10px; padding:8px; cursor:pointer;
+  letter-spacing:2px; transition:all .15s;
+}
+.p-btn:hover { border-color:var(--accent); color:var(--accent); }
+.p-btn.cancel:hover { border-color:var(--red); color:var(--red); }
+
+/* pin bar */
+#pin-bar {
+  display:none; position:fixed; top:0; left:0; right:0;
+  padding:7px 48px; font-size:10px;
+  color:var(--yellow); opacity:.5;
+  background:var(--bg); z-index:40;
+  border-bottom:1px solid var(--border);
+}
+
+@media(max-width:560px){
+  .msg { font-size:12px; }
+  #msg-in { font-size:16px; }
+  #drawer { width:85%; }
+}
+
+.hl-btn {
+  background:transparent;
+  border:1px solid var(--border, rgba(255,255,255,0.08));
+  color:var(--text-dim, rgba(255,255,255,0.3));
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px; padding:4px 10px;
+  cursor:pointer; letter-spacing:2px;
+  transition:all .15s;
+}
+.hl-btn:hover, .hl-btn.active {
+  border-color:var(--accent, #00ff41);
+  color:var(--accent, #00ff41);
+}
+.help-section { margin-bottom:20px; }
+.help-title {
+  font-family:'VT323',monospace;
+  font-size:20px;
+  color:var(--accent,#00ff41);
+  letter-spacing:2px;
+  margin-bottom:10px;
+  border-bottom:1px solid var(--border,rgba(255,255,255,0.06));
+  padding-bottom:6px;
+}
+.help-step {
+  display:flex; gap:10px; margin-bottom:8px;
+  font-size:12px; color:var(--text,rgba(255,255,255,0.7));
+  line-height:1.6;
+}
+.help-num {
+  color:var(--accent,#00ff41);
+  flex-shrink:0; font-size:11px;
+  opacity:.7;
+}
+.help-note {
+  font-size:10px;
+  color:var(--text-dim,rgba(255,255,255,0.3));
+  border-left:1px solid var(--border,rgba(255,255,255,0.06));
+  padding-left:10px;
+  margin-top:6px;
+  line-height:1.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="s-boot" class="screen active">
+  <div id="boot-studio">FOXEN STUDIO</div>
+  <div id="boot-bar"><div id="boot-bar-fill"></div></div>
+</div>
+
+<div id="s-lobby" class="screen">
+  <div class="lobby-logo">AGORA</div>
+  <div class="lobby-tagline">E2E ENCRYPTED  //  P2P  //  NO LOGS</div>
+  <div class="lobby-form">
+    <div class="l-label">IDENTIFY</div>
+    <input class="l-input" id="l-user" placeholder="username" maxlength="20" autocomplete="off" spellcheck="false">
+
+    <div class="l-divider">
+      <div class="l-divider-line"></div>
+      <div class="l-divider-text">ROOM</div>
+      <div class="l-divider-line"></div>
+    </div>
+
+    <button class="l-btn primary" onclick="createRoom()">CREATE NEW ROOM</button>
+
+    <div class="l-label" style="margin-top:16px">JOIN EXISTING</div>
+    <input class="l-input" id="l-code" placeholder="room code" maxlength="8" autocomplete="off" spellcheck="false" style="text-transform:uppercase">
+    <button class="l-btn" onclick="joinRoom()">JOIN ROOM</button>
+
+    <div class="l-status" id="l-st"></div>
+  </div>
+  <div style="margin-top:16px;text-align:center">
+    <button onclick="openHelp()" style="background:transparent;border:none;color:var(--text-dim,rgba(255,255,255,0.2));font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:2px;padding:4px 8px;transition:color .2s"
+    onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim,rgba(255,255,255,0.2))'">? HOW TO USE</button>
+  </div>
+</div>
+
+<div id="s-overlay" class="screen">
+  <div class="ov-icon"  id="ov-icon">[KEY]</div>
+  <div class="ov-title" id="ov-title">PASSWORD REQUIRED</div>
+  <div class="ov-sub"   id="ov-sub">This room is password protected.</div>
+  <div id="ov-pass-area" style="width:100%;max-width:320px;margin-top:8px">
+    <div class="pass-wrap">
+      <input class="l-input" id="ov-pass" type="password" placeholder="enter password" maxlength="64" autocomplete="off">
+      <button class="pass-eye" onclick="toggleVis('ov-pass',this)">SHOW</button>
+    </div>
+    <button class="l-btn primary ov-btn" style="margin-top:10px" onclick="submitPass()">ENTER</button>
+    <div class="l-status err" id="ov-err"></div>
+  </div>
+  <button class="l-btn" style="max-width:320px;margin-top:8px" onclick="goLobby()">BACK</button>
+</div>
+
+<div id="s-notfound" class="screen" style="gap:16px">
+  <div style="font-family:'VT323',monospace;font-size:48px;color:var(--red);letter-spacing:4px;opacity:.7">[404]</div>
+  <div style="font-family:'VT323',monospace;font-size:26px;letter-spacing:3px;color:rgba(255,255,255,0.6)">ROOM NOT FOUND</div>
+  <div id="notfound-sub" style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px;text-align:center">Bu oda kodu ile aktif bir oda yok.</div>
+  <button onclick="notFoundBack()" style="
+    margin-top:12px;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.08);
+    color:rgba(255,255,255,0.35);
+    font-family:'Share Tech Mono',monospace;
+    font-size:11px; padding:10px 24px;
+    cursor:pointer; letter-spacing:3px;
+    transition:all .2s; max-width:240px; width:100%;
+  "
+  onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+  onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.35)'">
+    RETURN TO MAIN MENU
+  </button>
+</div>
+
+<div id="s-connecting" class="screen">
+  <div style="text-align:center">
+    <div id="conn-title" style="font-family:'VT323',monospace;font-size:28px;color:var(--accent);letter-spacing:4px;margin-bottom:20px;animation:glowPulse 2s infinite">CONNECTING</div>
+    <div id="conn-room" style="font-size:10px;color:var(--text-dim);letter-spacing:3px;margin-bottom:24px"></div>
+    <div style="width:180px;height:1px;background:var(--border);overflow:hidden;margin:0 auto">
+      <div id="conn-bar" style="height:100%;background:var(--accent);width:0%;box-shadow:0 0 6px var(--accent);animation:connBar 1.5s ease-in-out infinite"></div>
+    </div>
+    <div id="conn-status" style="font-size:10px;color:var(--text-dim);margin-top:20px;letter-spacing:1px"></div>
+    <div id="conn-warning" style="display:none;margin-top:24px;padding:12px 16px;border:1px solid rgba(255,204,0,0.15);max-width:320px;font-size:10px;color:rgba(255,204,0,0.5);letter-spacing:.5px;line-height:1.7"></div>
+  </div>
+</div>
+
+<div id="s-chat" class="screen">
+
+  <div id="drawer-trigger" onclick="toggleDrawer()">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div id="drawer-overlay" onclick="closeDrawer()"></div>
+
+  <div id="drawer">
+    <div class="d-header">
+      <div class="d-roomcode">ROOM / <span id="d-room">----</span></div>
+      <div class="d-username">
+        <span id="d-user">--</span>
+        <span id="d-badge-admin" class="d-badge admin"  style="display:none">ADMIN</span>
+        <span id="d-badge-mod"   class="d-badge mod"    style="display:none">MOD</span>
+        <span id="d-badge-locked"class="d-badge locked" style="display:none">LOCKED</span>
+        <span id="d-badge-pass"  class="d-badge pass"   style="display:none">PASS</span>
+      </div>
+      <div class="d-enc" id="d-enc">[PLAIN]</div>
+    </div>
+
+    <div class="d-section">ONLINE</div>
+    <div id="d-users"></div>
+
+    <div class="d-section" style="margin-top:4px">THEME</div>
+    <div class="d-themes">
+      <button class="d-theme-btn active" data-t="ghost"    onclick="setTheme('ghost')"    title="Ghost"></button>
+      <button class="d-theme-btn"        data-t="terminal" onclick="setTheme('terminal')" title="Terminal"></button>
+      <button class="d-theme-btn"        data-t="amber"    onclick="setTheme('amber')"    title="Amber"></button>
+      <button class="d-theme-btn"        data-t="ice"      onclick="setTheme('ice')"      title="Ice"></button>
+      <button class="d-theme-btn"        data-t="blood"    onclick="setTheme('blood')"    title="Blood"></button>
+      <button class="d-theme-btn"        data-t="snowfox"  onclick="setTheme('snowfox')"  title="Snow Fox"></button>
+    </div>
+
+    <div class="d-divider"></div>
+    <div class="d-section">GENERAL</div>
+    <button class="d-btn" onclick="drawerCmd('clear')"><i class="di">x</i>Clear screen</button>
+    <button class="d-btn" onclick="drawerCmd('burn')"><i class="di">~</i>Burn timer</button>
+    <button class="d-btn" onclick="drawerCmd('msg')"><i class="di">></i>Private DM</button>
+    <button class="d-btn danger" onclick="drawerCmd('exit')"><i class="di">o</i>Leave room</button>
+
+    <div id="d-mod-sec" style="display:none">
+      <div class="d-divider"></div>
+      <div class="d-section">MODERATION</div>
+      <button class="d-btn" onclick="drawerCmd('kick')"><i class="di">!</i>Kick user</button>
+      <button class="d-btn danger" onclick="drawerCmd('ban')"><i class="di">x</i>Ban user</button>
+      <button class="d-btn" onclick="drawerCmd('mute')"><i class="di">-</i>Mute locally</button>
+      <button class="d-btn" onclick="drawerCmd('pin')"><i class="di">^</i>Pin message</button>
+      <button class="d-btn" onclick="drawerCmd('unpin')"><i class="di">v</i>Remove pin</button>
+    </div>
+
+    <div id="d-admin-sec" style="display:none">
+      <div class="d-divider"></div>
+      <div class="d-section">ADMIN</div>
+      <button class="d-btn" onclick="drawerCmd('promote')"><i class="di">*</i>Promote to admin</button>
+      <button class="d-btn" onclick="drawerCmd('revokeadmin')"><i class="di">-</i>Revoke admin</button>
+      <button class="d-btn" onclick="drawerCmd('setmod')"><i class="di">+</i>Grant moderator</button>
+      <button class="d-btn" onclick="drawerCmd('demod')"><i class="di">-</i>Remove moderator</button>
+    </div>
+
+    <div id="d-host-sec" style="display:none">
+      <div class="d-divider"></div>
+      <div class="d-section">HOST</div>
+      <button class="d-btn" onclick="drawerCmd('lock')"><i class="di">[</i>Lock room</button>
+      <button class="d-btn" onclick="drawerCmd('unlock')"><i class="di">]</i>Unlock room</button>
+      <button class="d-btn" onclick="drawerCmd('setpass')"><i class="di">*</i>Set password</button>
+      <button class="d-btn" onclick="drawerCmd('setmax')"><i class="di">#</i>Max users</button>
+      <button class="d-btn" onclick="drawerCmd('setroomcode')"><i class="di">@</i>Change room code</button>
+      <button class="d-btn" onclick="drawerCmd('transferhost')" style="color:var(--yellow)"><i class="di">></i>Transfer Ownership</button>
+    </div>
+
+    <div style="padding:16px; font-size:8px; color:var(--text-dim); opacity:.2; letter-spacing:1px; margin-top:auto;">
+      AGORA // FOXEN STUDIO
+    </div>
+  </div>
+
+  <div id="messages"></div>
+
+  <div id="pin-bar">[PIN] <span id="pin-text"></span></div>
+
+  <div id="ghost-input-wrap">
+    <span id="ghost-cursor">_</span>
+    <input id="msg-in" placeholder="" autocomplete="off" spellcheck="false" maxlength="500">
+    <button id="btn-file-send" onclick="triggerFileSend()">[FILE]</button>
+    <input type="file" id="hidden-file-input" style="display:none" onchange="handleFileSelected(event)">
+    <div class="enc-spin" id="enc-spinner"></div>
+  </div>
+
+  <div id="cd-bar"><div id="cd-fill"></div></div>
+</div>
+
+<div id="picker-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div id="picker" style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);padding:20px;width:100%;max-width:300px;animation:drawerIn .2s forwards">
+    <div id="picker-title" style="font-family:'VT323',monospace;font-size:18px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:12px"></div>
+    <input id="picker-search" placeholder="search..." autocomplete="off" spellcheck="false"
+      style="background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);font-family:'Share Tech Mono',monospace;font-size:13px;padding:6px 0;width:100%;outline:none;margin-bottom:10px;-webkit-appearance:none">
+    <div id="picker-list" style="max-height:200px;overflow-y:auto;scrollbar-width:none"></div>
+    <button onclick="pickerCancel()" style="margin-top:12px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);font-family:'Share Tech Mono',monospace;font-size:10px;padding:8px;cursor:pointer;width:100%;letter-spacing:2px;transition:all .15s"
+      onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'"
+      onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='rgba(255,255,255,0.3)'">CANCEL</button>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<div id="popup-overlay">
+  <div id="popup">
+    <div id="popup-title">INPUT</div>
+    <input id="popup-input" placeholder="" autocomplete="off" spellcheck="false" maxlength="100">
+    <div class="p-btns">
+      <button class="p-btn" onclick="popupConfirm()">CONFIRM</button>
+      <button class="p-btn cancel" onclick="popupCancel()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script>
+'use strict';
+
+// ── WAKE-UP SERVER SERVICE ──
+function wakeUpSignalServer() {
+    fetch('https://project-agora.onrender.com/').catch(() => {});
+}
+setInterval(wakeUpSignalServer, 300000); // Every 5 minutes
+wakeUpSignalServer();
+
+// ═══════════════════════════════════════════════════════════
+//  CRYPTO ENGINE  (WebCrypto RSA-OAEP + AES-GCM)
+//  Each user generates an RSA key pair on join.
+//  For group messages: a random AES-GCM session key is
+//  generated per message, encrypted with each recipient's
+//  RSA public key, and sent alongside the ciphertext.
+//  DMs use direct RSA-OAEP for small payloads.
+// ═══════════════════════════════════════════════════════════
+const Crypto = {
+  myPrivKey: null,
+  myPubKey:  null,
+  myPubKeyRaw: null, // base64 exported
+
+  async init() {
+    const kp = await crypto.subtle.generateKey(
+      { name:'RSA-OAEP', modulusLength:2048, publicExponent:new Uint8Array([1,0,1]), hash:'SHA-256' },
+      true, ['encrypt','decrypt']
+    );
+    this.myPrivKey   = kp.privateKey;
+    this.myPubKey    = kp.publicKey;
+    this.myPubKeyRaw = await this.exportPub(kp.publicKey);
+  },
+
+  async exportPub(key) {
+    const buf = await crypto.subtle.exportKey('spki', key);
+    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  },
+
+  async importPub(b64) {
+    const buf = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    return crypto.subtle.importKey('spki', buf, { name:'RSA-OAEP', hash:'SHA-256' }, false, ['encrypt']);
+  },
+
+  // Encrypt a string for multiple recipients
+  // Returns { ct, iv, keys: { username: encryptedAESKey_b64 } }
+  async encryptGroup(plaintext, recipientPubKeys) {
+    const enc     = new TextEncoder();
+    const aesKey  = await crypto.subtle.generateKey({ name:'AES-GCM', length:256 }, true, ['encrypt','decrypt']);
+    const iv      = crypto.getRandomValues(new Uint8Array(12));
+    const ctBuf   = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, aesKey, enc.encode(plaintext));
+    const aesRaw  = await crypto.subtle.exportKey('raw', aesKey);
+
+    const keys = {};
+    for (const [uname, pubKey] of Object.entries(recipientPubKeys)) {
+      const encKey = await crypto.subtle.encrypt({ name:'RSA-OAEP' }, pubKey, aesRaw);
+      keys[uname]  = btoa(String.fromCharCode(...new Uint8Array(encKey)));
+    }
+    return {
+      ct:  btoa(String.fromCharCode(...new Uint8Array(ctBuf))),
+      iv:  btoa(String.fromCharCode(...new Uint8Array(iv))),
+      keys,
+    };
+  },
+
+  // Decrypt a group message
+  async decryptGroup(payload, myUsername) {
+    const encKeyB64 = payload.keys[myUsername];
+    if (!encKeyB64) return null;
+    const encKey = Uint8Array.from(atob(encKeyB64), c => c.charCodeAt(0));
+    const aesRaw = await crypto.subtle.decrypt({ name:'RSA-OAEP' }, this.myPrivKey, encKey);
+    const aesKey = await crypto.subtle.importKey('raw', aesRaw, { name:'AES-GCM' }, false, ['decrypt']);
+    const iv     = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
+    const ct     = Uint8Array.from(atob(payload.ct), c => c.charCodeAt(0));
+    const plain  = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, aesKey, ct);
+    return new TextDecoder().decode(plain);
+  },
+
+  // Simple RSA encrypt for DMs (short text only)
+  async encryptDM(plaintext, pubKey) {
+    const enc = new TextEncoder();
+    const buf = await crypto.subtle.encrypt({ name:'RSA-OAEP' }, pubKey, enc.encode(plaintext));
+    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  },
+
+  async decryptDM(b64) {
+    const buf   = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const plain = await crypto.subtle.decrypt({ name:'RSA-OAEP' }, this.myPrivKey, buf);
+    return new TextDecoder().decode(plain);
+  },
+};
+
+
+// ── FINGERPRINT ─────────────────────────────────────────
+async function getFingerprint(pubKeyRaw) {
+  if (!pubKeyRaw) return '????';
+  try {
+    const buf = new TextEncoder().encode(pubKeyRaw);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).slice(0,2)
+      .map(b => b.toString(16).padStart(2,'0')).join('');
+  } catch(e) { return '????'; }
+}
+
+// ── RATE LIMITER ─────────────────────────────────────────
+const _msgCounts = new Map();
+function canSendMessage(peerId) {
+  const now = Date.now();
+  const d = _msgCounts.get(peerId) || { count:0, reset:now };
+  if (now - d.reset > 5000) { d.count=0; d.reset=now; }
+  d.count++;
+  _msgCounts.set(peerId, d);
+  return d.count <= 10; // max 10 per 5s
+}
+
+// ── REPLAY PROTECTION ────────────────────────────────────
+const _seenNonces = new Set();
+function makeNonce() {
+  return crypto.getRandomValues(new Uint8Array(8))
+    .reduce((s,b)=>s+b.toString(16).padStart(2,'0'),'');
+}
+function isValidTimestamp(ts) {
+  if (!ts) return false;
+  return Math.abs(Date.now() - ts) < 30000; // 30s tolerance
+}
+function isValidNonce(nonce) {
+  if (!nonce || _seenNonces.has(nonce)) return false;
+  _seenNonces.add(nonce);
+  // Clean old nonces every 1000 entries
+  if (_seenNonces.size > 1000) {
+    const arr = [..._seenNonces];
+    arr.slice(0, 500).forEach(n => _seenNonces.delete(n));
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let peer    = null;
+let myId    = '';
+let myUsername = '';
+let roomCode   = '';
+let isHost  = false;
+let isAdmin = false;
+let isMod   = false;
+let lastMsg = 0;
+const COOLDOWN = 3000;
+let cdTimer = null;
+let localMuted = new Set();
+let roomHostName = ''; // NEW: Tracks who holds the Crown
+
+// pubkey store: username → CryptoKey (imported public key)
+let pubKeys = {};
+
+// Host state
+let hostConns    = {};
+let hostPeerData = {}; // peerId → { username, banned, isMod, lastMsg, pubKeyRaw }
+let bannedNames  = new Set();
+let roomLocked   = false;
+let roomPassword = '';
+let maxUsers     = 0;
+let snaal        = false; // set new admin after leave
+
+// Client
+let hostConn = null;
+
+// Shared
+let roomUsers  = {}; // username → { peerId, isAdmin, isMod }
+let pinnedMsg  = ''; // current pinned message
+let burnTimers = {}; // msgId → timeout handle
+
+// FILE TRANSFER STATE
+let pendingFile = null;
+let pendingFileTarget = null;
+const MAX_FILE_SIZE = 750 * 1024 * 1024; // 750 MB
+
+// ═══════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════
+const BOOT_LINES = [
+  'AGORA TERMINAL v3.0.0',
+  'COPYRIGHT (C) FOXEN STUDIO',
+  '──────────────────────────────────',
+  'INITIALIZING CRYPTO ENGINE...',
+  'GENERATING RSA-2048 KEY PAIR......',
+  'AES-GCM SESSION KEYS.............. OK',
+  'PEERJS P2P LAYER.................. OK',
+  'WEBRTC ICE ADAPTER................ OK',
+  '──────────────────────────────────',
+  'E2E ENCRYPTED. NO LOGS. NO TRACE.',
+  '──────────────────────────────────',
+  'SYSTEM READY.',
+];
+
+async function boot() {
+  // Load saved theme
+  const saved = localStorage.getItem('agora-theme')||'ghost';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.querySelectorAll('.d-theme-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.t===saved);
+  });
+
+  // Start crypto AND progress bar in parallel
+  const cryptoPromise = Crypto.init().catch(e => console.warn('Crypto init:', e));
+
+  const fill = document.getElementById('boot-bar-fill');
+  // Animate to 80% quickly, then wait for crypto
+  for (let i=0; i<=80; i+=4) {
+    await wait(12);
+    fill.style.width = i + '%';
+  }
+  // Wait for crypto to finish
+  await cryptoPromise;
+  // Fill remaining
+  for (let i=82; i<=100; i+=2) {
+    await wait(8);
+    fill.style.width = i + '%';
+  }
+  await wait(150);
+  showScreen('s-lobby');
+  document.getElementById('l-user').focus();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function genCode() {
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6}, () => c[Math.random()*c.length|0]).join('');
+}
+
+function ts() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function clean(s) {
+  return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;').substring(0,500);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  fixVH();
+}
+
+function fixVH() {
+  const h = window.innerHeight+'px';
+  document.querySelectorAll('.screen').forEach(s => s.style.height = h);
+}
+
+function setLobbyStatus(msg, err=false) {
+  const el = document.getElementById('l-st');
+  el.textContent = msg;
+  el.className = 'l-status ' + (err ? 'err' : 'ok');
+}
+
+function shakeBody() {
+  document.body.classList.remove('shake');
+  void document.body.offsetWidth;
+  document.body.classList.add('shake');
+  setTimeout(() => document.body.classList.remove('shake'), 200);
+}
+
+function toggleVis(id, btn) {
+  const el = document.getElementById(id);
+  el.type = el.type==='password' ? 'text' : 'password';
+  btn.textContent = el.type==='password' ? 'SHOW' : 'HIDE';
+}
+
+async function goLobby() {
+  resetPeer();
+  await blackFlash(300);
+  showScreen('s-lobby');
+  document.getElementById('l-user').focus();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SOUND
+// ═══════════════════════════════════════════════════════════
+let actx = null;
+function sfx(type) {
+  try {
+    if (!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.connect(g); g.connect(actx.destination);
+    const t = actx.currentTime;
+    const m = { msg:[880,440,.07,.09], join:[440,880,.05,.18], leave:[440,220,.05,.18], dm:[660,880,.09,.16], err:[220,180,.05,.10] };
+    const [f1,f2,vol,dur] = m[type]||m.msg;
+    o.frequency.setValueAtTime(f1,t);
+    o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+    g.gain.setValueAtTime(vol,t);
+    g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    if (type==='err') o.type='sawtooth';
+    o.start(); o.stop(t+dur);
+  } catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MESSAGES
+// ═══════════════════════════════════════════════════════════
+let msgCounter = 0;
+function addMsg(text, cls='', user='', burnSecs=0) {
+  if (user && user!==myUsername && localMuted.has(user)) return;
+  const box = document.getElementById('messages');
+  const d   = document.createElement('div');
+  const mid  = 'msg-'+(++msgCounter);
+  d.id = mid;
+  let extra = cls ? ' '+cls : '';
+  if (user && user===myUsername) extra += ' own';
+  d.className = 'msg'+extra;
+
+  // Build message DOM safely — no innerHTML for user content
+  const tsSpan = document.createElement('span');
+  tsSpan.className = 'ts';
+  tsSpan.textContent = '['+ts()+']';
+  d.appendChild(tsSpan);
+
+  if (!user) {
+    const txt = document.createElement('span');
+    txt.textContent = text;
+    d.appendChild(txt);
+    // Also show as toast for important system messages
+    if (cls && (cls.includes('ok')||cls.includes('warn')||cls.includes('err'))) {
+      const ttype = cls.includes('err')?'err':cls.includes('warn')?'warn':'ok';
+      if (text.length < 80) toast(text, ttype, 2000);
+    }
+  } else if (cls==='dm') {
+    const who = document.createElement('span');
+    who.className = 'who';
+    who.textContent = user + ' → you';
+    d.appendChild(who);
+    d.appendChild(document.createTextNode(': ' + text));
+    sfx('dm');
+  } else {
+    const who = document.createElement('span');
+    who.className = 'who';
+    who.textContent = user;
+    d.appendChild(who);
+    d.appendChild(document.createTextNode(': ' + text));
+    if (user!==myUsername) sfx('msg');
+  }
+
+  if (burnSecs > 0) {
+    const indicator = document.createElement('span');
+    indicator.style.cssText = 'color:var(--red);font-size:9px;margin-left:6px;';
+    indicator.textContent = '[~'+burnSecs+'s';
+    d.appendChild(indicator);
+
+    let remaining = burnSecs;
+    const tick = setInterval(()=>{
+      remaining--;
+      if (indicator.parentNode) indicator.textContent = '[~'+remaining+'s';
+      if (remaining <= 0) clearInterval(tick);
+    }, 1000);
+
+    burnTimers[mid] = setTimeout(()=>{
+      clearInterval(tick);
+      const el = document.getElementById(mid);
+      if (el) {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 500);
+      }
+      delete burnTimers[mid];
+    }, burnSecs * 1000);
+  }
+
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+  return mid;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  USER LIST + BADGES
+// ═══════════════════════════════════════════════════════════
+function renderUsers() {
+  updateDrawer();
+}
+
+function updateBadges() {
+  updateDrawer();
+}
+
+function updateEncIndicator() {
+  const el  = document.getElementById('t-enc');
+  if(!el) return;
+  const all = Object.keys(roomUsers).filter(u => u!==myUsername);
+  const ready = all.length > 0 && all.every(u => !!pubKeys[u]);
+  el.textContent = ready ? '[ENC]' : (all.length===0 ? '[ENC]' : '[PART]');
+  el.className   = 'tb-enc' + (ready || all.length===0 ? ' on' : '');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COOLDOWN
+// ═══════════════════════════════════════════════════════════
+function startCD() {
+  const inp  = document.getElementById('msg-in');
+  const bar  = document.getElementById('cd-bar');
+  const fill = document.getElementById('cd-fill');
+  inp.disabled = true; bar.style.display='block'; fill.style.width='100%';
+  let elapsed = 0;
+  cdTimer = setInterval(()=>{
+    elapsed += 50;
+    fill.style.width = Math.max(0,100-elapsed/COOLDOWN*100)+'%';
+    if (elapsed>=COOLDOWN) {
+      clearInterval(cdTimer);
+      inp.disabled=false; bar.style.display='none'; fill.style.width='100%';
+      inp.focus();
+    }
+  },50);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PEER SETUP (CUSTOM SERVER)
+// ═══════════════════════════════════════════════════════════
+function makePeer(id) {
+  const cfg = {
+    host: 'project-agora.onrender.com', port: 443, secure: true, path: '/',
+    config: { iceServers: [
+      {urls:'stun:stun.l.google.com:19302'},
+      {urls:'stun:stun1.l.google.com:19302'},
+    ]},
+    debug: 0,
+  };
+  return id ? new Peer(id,cfg) : new Peer(cfg);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CREATE ROOM
+// ═══════════════════════════════════════════════════════════
+async function createRoom() {
+  const uname = getUser(); if (!uname) return;
+  roomCode=genCode(); myUsername=uname;
+  isHost=true; isAdmin=true; isMod=false;
+  roomHostName=myUsername; // CROWN
+  roomLocked=false; roomPassword=''; maxUsers=0;
+  hostConns={}; hostPeerData={}; bannedNames.clear(); roomUsers={};
+  pubKeys={};
+
+  showConnecting('CREATING');
+  connStatus('');
+  peer = makePeer('AGORA-'+roomCode);
+  peer.on('open', async id => {
+    myId = id;
+    roomUsers[myUsername] = { peerId:id, isAdmin:true, isMod:false };
+    pubKeys[myUsername]   = Crypto.myPubKey;
+    connStatus('Room ready...');
+    showConnWarning('WebRTC exposes your IP to peers who join.\nUse a VPN for full anonymity.\nMessages are E2E encrypted — no server can read them.');
+    await wait(1000);
+    enterChat();
+    addMsg('Room created. Code: '+roomCode,'sys ok');
+    addMsg('You are HOST and ADMIN.','sys ok');
+    addMsg('WARNING: WebRTC exposes your IP to peers. Use a VPN for anonymity.','sys warn');
+    renderUsers(); updateBadges();
+  });
+  peer.on('connection', handleIncoming);
+  peer.on('error', e => { setLobbyStatus('ERROR: '+e.message,true); resetPeer(); });
+  peer.on('disconnected', ()=>{ if(peer) peer.reconnect(); });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  JOIN ROOM
+// ═══════════════════════════════════════════════════════════
+async function joinRoom() {
+  const uname = getUser(); if (!uname) return;
+  const code  = document.getElementById('l-code').value.trim().toUpperCase();
+  if (code.length<4) { setLobbyStatus('ENTER A VALID ROOM CODE',true); return; }
+
+  myUsername=uname; isHost=false; isAdmin=false; isMod=false; pubKeys={};
+  showConnecting('CONNECTING');
+  connStatus('');
+  peer = makePeer();
+  peer.on('open', id => {
+    myId=id; roomCode=code;
+    hostConn = peer.connect('AGORA-'+code,{reliable:true});
+    hostConn.on('open', ()=>{
+      hostConn.send({ type:'JOIN_REQ', username:uname, peerId:id, pubKey:Crypto.myPubKeyRaw });
+    });
+    hostConn.on('data',  d => handleFromHost(d));
+    hostConn.on('close', ()=>{ addMsg('CONNECTION TO HOST LOST.','sys err'); shakeBody(); });
+    hostConn.on('error', e => addMsg('CONN ERROR: '+e.message,'sys err'));
+  });
+  // Listen for direct P2P connections (like File Transfers)
+  peer.on('connection', handleIncomingDirect);
+  peer.on('error', e => {
+    if (e.type==='peer-unavailable') {
+      resetPeer();
+      showRoomNotFound();
+    } else {
+      resetPeer();
+      showRoomNotFound('Connection error. Try again.');
+    }
+  });
+  peer.on('disconnected', ()=>{ if(peer) peer.reconnect(); });
+}
+
+// Direct P2P listener for incoming files (non-host routing)
+function handleIncomingDirect(conn) {
+    conn.on('data', d => {
+        if (d.type === 'FILE_DATA') {
+            addMsg('File received: '+d.name+'. Downloading...', 'sys ok');
+            const blob = new Blob([d.file]);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = d.name; a.click();
+            URL.revokeObjectURL(url);
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HOST: INCOMING
+// ═══════════════════════════════════════════════════════════
+function handleIncoming(conn) {
+  conn.on('data',  d => {
+      // Intercept file data if the Host is receiving a file directly
+      if (d.type === 'FILE_DATA') {
+            addMsg('File received: '+d.name+'. Downloading...', 'sys ok');
+            const blob = new Blob([d.file]);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = d.name; a.click();
+            URL.revokeObjectURL(url);
+            return;
+      }
+      handleFromClient(conn,d);
+  });
+  conn.on('close', ()=> clientLeft(conn.peer));
+  conn.on('error', ()=> clientLeft(conn.peer));
+}
+
+function clientLeft(pid) {
+  const pd = hostPeerData[pid];
+  if (!pd) return;
+  const uname = pd.username;
+  delete hostConns[pid]; delete hostPeerData[pid]; delete roomUsers[uname]; delete pubKeys[uname];
+  broadcast({ type:'USER_LEFT', username:uname });
+  broadcast({ type:'SYNC', users:roomUsers, hostName: roomHostName });
+  broadcast({ type:'KEY_REMOVE', username:uname });
+  addMsg(uname+' left.','sys warn'); sfx('leave'); renderUsers();
+  // snaal: transfer host if enabled and there are still peers
+  if (snaal && Object.keys(hostConns).length > 0) {
+    doSnaalTransfer(); return;
+  }
+}
+
+function resetRoom() {
+  roomLocked=false; roomPassword=''; bannedNames.clear();
+  hostPeerData={}; hostConns={};
+  roomUsers={}; pubKeys={};
+  roomUsers[myUsername] = { peerId:myId, isAdmin:true, isMod:false };
+  pubKeys[myUsername]   = Crypto.myPubKey;
+  updateBadges(); renderUsers();
+  addMsg('All peers left. Room reset.','sys warn');
+}
+
+async function handleFromClient(conn, data) {
+  const pid = conn.peer;
+
+  if (data.type==='JOIN_REQ') {
+    const raw = String(data.username).replace(/[^a-zA-Z0-9_\-çÇğĞıİöÖşŞüÜ]/g,'').substring(0,20);
+    if (bannedNames.has(raw)||(hostPeerData[pid]&&hostPeerData[pid].banned)) { conn.send({type:'BANNED'}); conn.close(); return; }
+    if (roomLocked) { conn.send({type:'LOCKED'}); conn.close(); return; }
+    if (roomPassword) {
+      conn.send({type:'NEED_PASS'});
+      hostPeerData[pid] = { username:raw, banned:false, isMod:false, lastMsg:0, pubKeyRaw:data.pubKey, pendingPass:true };
+      hostConns[pid]=conn; return;
+    }
+    await admitUser(conn,pid,raw,data.pubKey); return;
+  }
+
+  if (data.type==='PASS_ATTEMPT') {
+    const pd = hostPeerData[pid];
+    if (!pd||!pd.pendingPass) return;
+    if (data.pass===roomPassword) { pd.pendingPass=false; await admitUser(conn,pid,pd.username,pd.pubKeyRaw); }
+    else conn.send({type:'PASS_WRONG'});
+    return;
+  }
+
+  if (data.type==='CHAT_ENC') {
+    const pd = hostPeerData[pid];
+    if (!pd||pd.pendingPass||pd.banned) return;
+    // Rate limit
+    if (!canSendMessage(pid)) { conn.send({type:'SYS',text:'Rate limit exceeded.',cls:'sys err'}); return; }
+    // Replay protection
+    if (!isValidTimestamp(data.ts)) { conn.send({type:'SYS',text:'Message expired. Check your system clock.',cls:'sys err'}); return; }
+    if (!isValidNonce(data.nonce))  { conn.send({type:'SYS',text:'Duplicate rejected.',cls:'sys err'}); return; }
+    const now=Date.now();
+    if (pd.lastMsg&&(now-pd.lastMsg)<3000) { conn.send({type:'SYS',text:'Spam protection.',cls:'sys err'}); return; }
+    pd.lastMsg=now;
+    broadcast({ type:'CHAT_ENC', from:pd.username, payload:data.payload, burn:data.burn||0, nonce:data.nonce, ts:data.ts }, pid);
+    // Decrypt for host display
+    try {
+      const plain = await Crypto.decryptGroup(data.payload, myUsername);
+      if (plain!==null) addMsg(plain,'',pd.username, data.burn||0);
+    } catch(e){}
+    return;
+  }
+
+  if (data.type==='DM_RELAY') {
+    const pd = hostPeerData[pid];
+    if (!pd) return;
+    const target = roomUsers[data.to];
+    if (!target) return;
+    const tc = hostConns[target.peerId];
+    if (tc) tc.send({ type:'DM_ENC', from:pd.username, ct:data.ct });
+    return;
+  }
+
+  // FILE HANDSHAKE RELAY
+  if (data.type==='RELAY') {
+    const pd = hostPeerData[pid];
+    if (!pd) return;
+    const target = roomUsers[data.to];
+    if (!target) return;
+    
+    // Inject verified sender
+    data.data.fromUser = pd.username;
+
+    if (data.to === myUsername) {
+      // Relay to host itself
+      handleFromHost(data.data);
+    } else {
+      const tc = hostConns[target.peerId];
+      if (tc) tc.send(data.data);
+    }
+    return;
+  }
+
+  // PIN/UNPIN relay from admin/mod clients
+  if (data.type==='PIN') {
+    const pd = hostPeerData[pid];
+    if (!pd) return;
+    const u = roomUsers[pd.username];
+    if (!u||(!u.isAdmin&&!u.isMod)) return;
+    pinnedMsg = data.text;
+    broadcast({ type:'PIN', text:data.text }, pid);
+    showPin(data.text);
+    return;
+  }
+  if (data.type==='UNPIN') {
+    const pd = hostPeerData[pid];
+    if (!pd) return;
+    const u = roomUsers[pd.username];
+    if (!u||(!u.isAdmin&&!u.isMod)) return;
+    pinnedMsg='';
+    broadcast({ type:'UNPIN' }, pid);
+    hidePin();
+    return;
+  }
+
+  if (data.type==='MOD_ACTION') {
+    const pd = hostPeerData[pid];
+    if (!pd) return;
+    if (!pd.isMod && !roomUsers[pd.username]?.isAdmin) return;
+    
+    if (data.target === roomHostName) {
+        conn.send({type:'SYS',text:'Host is untouchable.',cls:'sys err'});
+        return;
+    }
+    
+    const target = roomUsers[data.target];
+    if (!target||target.isAdmin) return;
+    if (data.action==='kick') {
+      const tc=hostConns[target.peerId];
+      if(tc){tc.send({type:'KICKED'});setTimeout(()=>tc.close(),400);}
+      broadcast({type:'SYS',text:data.target+' was kicked by '+pd.username+'.',cls:'sys warn'});
+      addMsg(data.target+' was kicked by '+pd.username+'.','sys warn');
+    }
+    if (data.action==='ban') {
+      const tpid=target.peerId; bannedNames.add(data.target);
+      if(hostPeerData[tpid]) hostPeerData[tpid].banned=true;
+      const tc=hostConns[tpid];
+      if(tc){tc.send({type:'BANNED'});setTimeout(()=>tc.close(),400);}
+      broadcast({type:'SYS',text:data.target+' was banned by '+pd.username+'.',cls:'sys err'});
+      addMsg(data.target+' was banned by '+pd.username+'.','sys err');
+    }
+    return;
+  }
+}
+
+async function admitUser(conn, pid, rawName, pubKeyRaw) {
+  if (maxUsers>0 && Object.keys(roomUsers).length>=maxUsers) { conn.send({type:'LOCKED'}); conn.close(); return; }
+  const uname = uniqueName(rawName);
+  hostConns[pid]    = conn;
+  hostPeerData[pid] = { username:uname, banned:false, isMod:false, lastMsg:0, pubKeyRaw };
+  roomUsers[uname]  = { peerId:pid, isAdmin:false, isMod:false };
+
+  // Import their public key
+  if (pubKeyRaw) {
+    try { pubKeys[uname] = await Crypto.importPub(pubKeyRaw); } catch(e){}
+  }
+
+  // Send them the full key directory (all current users' pubkeys)
+  const keyDir = {};
+  for (const [u,pd] of Object.entries(hostPeerData)) {
+    if (pd.pubKeyRaw) keyDir[pd.username] = pd.pubKeyRaw;
+  }
+  keyDir[myUsername] = Crypto.myPubKeyRaw;
+
+  conn.send({ type:'JOIN_OK', username:uname, roomCode, pin: pinnedMsg||'' });
+  conn.send({ type:'SYNC', users:roomUsers, hostName: roomHostName });
+  conn.send({ type:'KEY_DIR', keys:keyDir });
+
+  // Broadcast new key to existing users
+  broadcast({ type:'KEY_ADD', username:uname, pubKey:pubKeyRaw }, pid);
+  broadcast({ type:'USER_JOIN', username:uname }, pid);
+  broadcast({ type:'SYNC', users:roomUsers, hostName: roomHostName });
+
+  addMsg(uname+' joined.','sys'); sfx('join'); renderUsers();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CLIENT: FROM HOST
+// ═══════════════════════════════════════════════════════════
+async function handleFromHost(data) {
+  if (data.type==='BANNED')    { showOverlay('banned');   resetPeer(); return; }
+  if (data.type==='LOCKED')    { showOverlay('locked');   resetPeer(); return; }
+  if (data.type==='NEED_PASS') { showOverlay('password'); return; }
+  if (data.type==='PASS_WRONG'){ document.getElementById('ov-err').textContent='WRONG PASSWORD.'; sfx('err'); return; }
+
+  if (data.type==='JOIN_OK') {
+    myUsername=data.username; roomCode=data.roomCode;
+    connStatus('Keys exchanging...');
+    showConnWarning('WebRTC exposes your IP to peers in this room.\nUse a VPN for full anonymity.\nMessages are E2E encrypted — no server can read them.');
+    await wait(1200);
+    enterChat();
+    addMsg('Connected to room '+roomCode+'.','sys ok');
+    addMsg('Exchanging encryption keys...','sys');
+    if (data.pin) {
+      pinnedMsg = data.pin;
+      showPin(data.pin);
+    }
+    renderUsers(); updateBadges();
+    return;
+  }
+
+  if (data.type==='SYNC') {
+    roomUsers=data.users||{};
+    if (data.hostName) roomHostName = data.hostName;
+    const me=roomUsers[myUsername];
+    isAdmin=!!(me&&me.isAdmin); isMod=!!(me&&me.isMod);
+    updateBadges(); renderUsers(); return;
+  }
+
+  if (data.type==='KEY_DIR') {
+    // Import all public keys from directory
+    for (const [uname,raw] of Object.entries(data.keys)) {
+      if (uname!==myUsername && raw) {
+        try { pubKeys[uname]=await Crypto.importPub(raw); } catch(e){}
+      }
+    }
+    addMsg('Encryption keys ready. [ENC]','sys ok');
+    updateEncIndicator(); renderUsers();
+    return;
+  }
+
+  if (data.type==='KEY_ADD') {
+    if (data.pubKey && data.username!==myUsername) {
+      try { pubKeys[data.username]=await Crypto.importPub(data.pubKey); } catch(e){}
+    }
+    updateEncIndicator(); renderUsers(); return;
+  }
+
+  if (data.type==='KEY_REMOVE') {
+    delete pubKeys[data.username];
+    updateEncIndicator(); renderUsers(); return;
+  }
+
+  if (data.type==='CHAT_ENC') {
+    try {
+      const plain = await Crypto.decryptGroup(data.payload, myUsername);
+      if (plain!==null) addMsg(plain,'',data.from, data.burn||0);
+    } catch(e){ addMsg('[encrypted message — could not decrypt]','sys warn'); }
+    return;
+  }
+
+  if (data.type==='DM_ENC') {
+    try {
+      const plain = await Crypto.decryptDM(data.ct);
+      addMsg(plain,'dm',data.from);
+    } catch(e){ addMsg('[encrypted DM — could not decrypt]','sys warn'); }
+    return;
+  }
+
+  // FILE HANDSHAKES
+  if (data.type === 'FILE_OFFER') {
+    const fromUser = data.fromUser || data.from;
+    if (data.size > MAX_FILE_SIZE) {
+       addMsg('Auto-rejected file from '+fromUser+' (>750MB).', 'sys err');
+       return;
+    }
+    const mb = (data.size / (1024*1024)).toFixed(2);
+    if (confirm('Incoming File\nFrom: '+fromUser+'\nName: '+data.name+'\nSize: '+mb+'MB\nAccept?')) {
+        addMsg('Accepted file from '+fromUser+'. Connecting...', 'sys ok');
+        const ack = { type: 'FILE_ACCEPT', name: data.name, from: myUsername, to: fromUser, peerId: myId };
+        if (isHost) sendTo(fromUser, ack);
+        else if (hostConn) hostConn.send({ type: 'RELAY', to: fromUser, data: ack });
+    } else {
+        addMsg('Rejected file from '+fromUser+'.', 'sys warn');
+    }
+    return;
+  }
+
+  if (data.type === 'FILE_ACCEPT') {
+    const fromUser = data.fromUser || data.from;
+    if (pendingFile && pendingFile.name === data.name && pendingFileTarget === fromUser) {
+        addMsg(fromUser+' accepted. Sending file...', 'sys');
+        const fileConn = peer.connect(data.peerId, { reliable: true });
+        fileConn.on('open', () => {
+            fileConn.send({ type: 'FILE_DATA', name: pendingFile.name, file: pendingFile });
+            addMsg('File sent to '+fromUser+'.', 'sys ok');
+            pendingFile = null;
+            pendingFileTarget = null;
+            setTimeout(() => fileConn.close(), 1000);
+        });
+    }
+    return;
+  }
+
+  if (data.type==='USER_JOIN') { addMsg(data.username+' joined.','sys'); sfx('join'); shakeBody(); return; }
+  if (data.type==='USER_LEFT') { addMsg(data.username+' left.','sys warn'); sfx('leave'); return; }
+  if (data.type==='SYS')       { addMsg(data.text,data.cls||'sys'); return; }
+  if (data.type==='KICKED')    { addMsg('YOU WERE KICKED.','sys err'); shakeBody(); setTimeout(()=>{ resetPeer(); goLobby(); },1500); return; }
+  if (data.type==='PROMOTED')  { isAdmin=true; isMod=false; updateBadges(); addMsg('You are now ADMIN.','sys ok'); shakeBody(); return; }
+  if (data.type==='DEMOTED')   { isAdmin=false; updateBadges(); addMsg('Your admin role was revoked.','sys warn'); return; }
+  if (data.type==='MOD_GRANTED'){ isMod=true; updateBadges(); addMsg('You are now MODERATOR.','sys ok'); shakeBody(); return; }
+  if (data.type==='MOD_REVOKED'){ isMod=false; updateBadges(); addMsg('Your moderator role was removed.','sys warn'); return; }
+  if (data.type==='ROOM_LOCK') { roomLocked=data.val; updateBadges(); addMsg(data.val?'Room locked.':'Room unlocked.','sys warn'); return; }
+  if (data.type==='PIN')   { pinnedMsg=data.text; showPin(data.text); return; }
+  if (data.type==='UNPIN') { pinnedMsg=''; hidePin(); return; }
+
+  if (data.type==='HOST_TRANSFER') {
+    isHost=true; isAdmin=true; isMod=false;
+    roomPassword = data.password||'';
+    roomLocked   = data.locked||false;
+    maxUsers     = data.maxUsers||0;
+    bannedNames  = new Set(data.bannedNames||[]);
+    pinnedMsg    = data.pin||'';
+    // Notify remaining peers to reconnect to same room code
+    if (hostConn) { try{ hostConn.close(); }catch(e){} hostConn=null; }
+    if (peer) { try{ peer.destroy(); }catch(e){} peer=null; }
+    hostConns={}; hostPeerData={};
+    addMsg('Waiting for old host ID to be released...','sys');
+    async function tryBecomeHost(attempt) {
+      await wait(3000 * attempt);
+      peer = makePeer('AGORA-'+roomCode);
+      peer.on('open', id => {
+        myId=id;
+        roomUsers[myUsername].isAdmin=true;
+        pubKeys[myUsername]=Crypto.myPubKey;
+        updateBadges(); renderUsers();
+        addMsg('You are now HOST. Room is live again.','sys ok');
+        shakeBody();
+      });
+      peer.on('connection', handleIncoming);
+      peer.on('disconnected', ()=>{ if(peer) peer.reconnect(); });
+      peer.on('error', e => {
+        if (e.type === 'unavailable-id' && attempt < 4) {
+          addMsg('ID still taken, retrying... ('+attempt+'/4)','sys warn');
+          try{ peer.destroy(); }catch(ex){}
+          peer=null;
+          tryBecomeHost(attempt+1);
+        } else {
+          addMsg('Host transfer failed: '+e.message,'sys err');
+        }
+      });
+    }
+    tryBecomeHost(1);
+    hostConn=null;
+    return;
+  }
+
+  if (data.type==='ROOM_MIGRATE') {
+    const newCode = data.newCode;
+    addMsg('[!] Room migrating to '+newCode+'. Reconnecting...','sys warn');
+    shakeBody(); sfx('join');
+    // Save current username and wait briefly, then rejoin
+    const savedUser = myUsername;
+    const savedAdmin = isAdmin;
+    const savedMod   = isMod;
+    resetPeer();
+    roomUsers={}; pubKeys={};
+    await wait(800);
+    // Reconnect to new code
+    roomCode = newCode;
+    peer = makePeer();
+    peer.on('open', id => {
+      myId = id;
+      hostConn = peer.connect('AGORA-'+newCode, { reliable:true });
+      hostConn.on('open', ()=>{
+        hostConn.send({ type:'JOIN_REQ', username:savedUser, peerId:id, pubKey:Crypto.myPubKeyRaw });
+      });
+      hostConn.on('data',  d => handleFromHost(d));
+      hostConn.on('close', ()=>{ addMsg('CONNECTION LOST.','sys err'); shakeBody(); });
+      hostConn.on('error', e => addMsg('CONN ERROR: '+e.message,'sys err'));
+    });
+    peer.on('error', e => addMsg('Migration failed: '+e.message,'sys err'));
+    peer.on('disconnected', ()=>{ if(peer) peer.reconnect(); });
+    document.getElementById('t-room').textContent = newCode;
+    return;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  OVERLAY
+// ═══════════════════════════════════════════════════════════
+function showOverlay(type) {
+  const cfg = {
+    password: ['[KEY]','var(--cyan)','PASSWORD REQUIRED','This room is password protected.', true],
+    locked:   ['[ENC]','var(--red)', 'ROOM LOCKED',      'The host has locked this room.',   false],
+    banned:   ['[X]','var(--red)', 'ACCESS DENIED',    'You have been banned from this room.', false],
+  }[type];
+  document.getElementById('ov-icon').textContent   = cfg[0];
+  document.getElementById('ov-icon').style.color   = cfg[1];
+  document.getElementById('ov-title').textContent  = cfg[2];
+  document.getElementById('ov-sub').textContent    = cfg[3];
+  document.getElementById('ov-pass-area').style.display = cfg[4] ? 'block':'none';
+  document.getElementById('ov-err').textContent    = '';
+  document.getElementById('ov-pass').value         = '';
+  showScreen('s-overlay'); sfx('err'); shakeBody();
+}
+
+function submitPass() {
+  const pass = document.getElementById('ov-pass').value;
+  if (!pass) return;
+  if (hostConn?.open) hostConn.send({ type:'PASS_ATTEMPT', pass });
+  else document.getElementById('ov-err').textContent = 'Connection lost. Go back.';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ENTER CHAT
+// ═══════════════════════════════════════════════════════════
+async function enterChat() {
+  pubKeys[myUsername] = Crypto.myPubKey;
+  await blackFlash(300);
+  updateBadges();
+  showScreen('s-chat');
+  scheduleFade();
+  setTimeout(()=>document.getElementById('msg-in').focus(), 100);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SEND MESSAGE
+// ═══════════════════════════════════════════════════════════
+// burn state — set by /burn command, 0 = off
+let burnSecs = 0;
+
+async function sendMsg(text) {
+  text = text.trim();
+  if (!text) return;
+  if (text[0]==='/') { runCmd(text); return; }
+
+  const now = Date.now();
+  if (now-lastMsg < COOLDOWN) { addMsg('Cooldown active. Wait.','sys err'); sfx('err'); return; }
+  lastMsg = now; startCD();
+
+  const recipients = {};
+  for (const [uname, key] of Object.entries(pubKeys)) {
+    if (uname !== myUsername) recipients[uname] = key;
+  }
+
+  if (Object.keys(recipients).length === 0) {
+    addMsg(text,'',myUsername,burnSecs); return;
+  }
+
+  document.getElementById('enc-spinner').style.display = 'block';
+  try {
+    const payload = await Crypto.encryptGroup(text, recipients);
+    document.getElementById('enc-spinner').style.display = 'none';
+    addMsg(text,'',myUsername,burnSecs);
+    const nonce = makeNonce();
+    const ts_out = Date.now();
+    if (isHost)        broadcast({ type:'CHAT_ENC', from:myUsername, payload, burn:burnSecs, nonce, ts:ts_out });
+    else if (hostConn) hostConn.send({ type:'CHAT_ENC', payload, burn:burnSecs, nonce, ts:ts_out });
+  } catch(e) {
+    document.getElementById('enc-spinner').style.display = 'none';
+    addMsg('Encryption failed: '+e.message,'sys err'); sfx('err');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FILE TRANSFER LOGIC
+// ═══════════════════════════════════════════════════════════
+async function triggerFileSend() {
+    const u = await showUserPicker('SEND FILE TO');
+    if (!u) return;
+    pendingFileTarget = u;
+    document.getElementById('hidden-file-input').click();
+}
+
+function handleFileSelected(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+        toast('File too large. Max 750MB.', 'err');
+        e.target.value = '';
+        return;
+    }
+    pendingFile = file;
+    addMsg(`Offering file ${file.name} to ${pendingFileTarget}...`, 'sys');
+    
+    const data = { 
+        type: 'FILE_OFFER', 
+        name: file.name, 
+        size: file.size, 
+        from: myUsername, 
+        to: pendingFileTarget 
+    };
+    
+    if (isHost) {
+        if (pendingFileTarget === myUsername) return; 
+        sendTo(pendingFileTarget, data);
+    } else {
+        if (hostConn) hostConn.send({ type: 'RELAY', to: pendingFileTarget, data: data });
+    }
+    e.target.value = '';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BROADCAST
+// ═══════════════════════════════════════════════════════════
+function broadcast(data, skip=null) {
+  Object.entries(hostConns).forEach(([pid,c]) => {
+    if (pid!==skip) try{ c.send(data); }catch(e){}
+  });
+}
+
+function sendTo(username, data) {
+  const u=roomUsers[username]; if(!u) return false;
+  const c=hostConns[u.peerId]; if(!c) return false;
+  try{ c.send(data); return true; }catch(e){ return false; }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COMMANDS
+// ═══════════════════════════════════════════════════════════
+function runCmd(raw) {
+  const parts = raw.trim().split(/\s+/);
+  const cmd   = parts[0].toLowerCase();
+  const arg1  = parts[1];
+
+  switch(cmd) {
+    case '/help':
+      addMsg('── COMMANDS ────────────────────────────','sys');
+      addMsg('/help                  — this list','sys');
+      addMsg('/users                 — online users','sys');
+      addMsg('/clear                 — clear screen','sys');
+      addMsg('/exit                  — leave room','sys');
+      addMsg('/msg <user> <text>     — private DM','sys');
+      addMsg('/mute <user>           — hide locally','sys');
+      addMsg('/unmute <user>         — unhide','sys');
+      addMsg('/burn <secs|off>       — auto-delete messages','sys');
+      if (isAdmin||isMod) {
+        addMsg('── MOD/ADMIN ───────────────────────────','sys warn');
+        addMsg('/kick <user>           — kick','sys warn');
+        addMsg('/ban <user>            — ban','sys warn');
+        addMsg('/unban <user>          — remove ban','sys warn');
+        addMsg('/pin <message>         — pin message','sys warn');
+        addMsg('/unpin                 — remove pin','sys warn');
+        addMsg('/set mod <user>        — grant moderator','sys warn');
+        addMsg('/set demod <user>      — remove moderator','sys warn');
+      }
+      if (isAdmin) {
+        addMsg('/promote <user>        — grant admin','sys warn');
+      }
+      if (isHost) {
+        addMsg('── HOST ────────────────────────────────','sys warn');
+        addMsg('/set lock              — lock room','sys warn');
+        addMsg('/set unlock            — unlock room','sys warn');
+        addMsg('/set pass <pass>       — set password','sys warn');
+        addMsg('/set pass 0            — remove password','sys warn');
+        addMsg('/set max <n>           — max users (0=unlimited)','sys warn');
+        addMsg('/set roomcode <code>   — migrate to new code','sys warn');
+        addMsg('/set roomcode r        — migrate to random code','sys warn');
+      }
+      break;
+
+    case '/users':
+      addMsg('── ONLINE ──────────────────────────────','sys');
+      (async()=>{
+        for(const [u,d] of Object.entries(roomUsers)){
+          let s='';
+          if(u === roomHostName) s+=' [HOST]';
+          else if(d.isAdmin) s+=' [ADMIN]';
+          else if(d.isMod)   s+=' [MOD]';
+          
+          const pd = hostPeerData ? Object.values(hostPeerData).find(p=>p.username===u) : null;
+          const raw = pd ? pd.pubKeyRaw : (u===myUsername ? Crypto.myPubKeyRaw : null);
+          const fp = raw ? await getFingerprint(raw) : '????';
+          const enc = pubKeys[u] ? ' [ENC:'+fp+']' : ' [PLAIN]';
+          addMsg('  • '+u+s+enc,'sys');
+        }
+      })();
+      break;
+
+    case '/clear':
+      document.getElementById('messages').innerHTML='';
+      addMsg('SCREEN CLEARED.','sys ok');
+      break;
+
+    case '/exit':
+      addMsg('Leaving room...','sys warn');
+      if (isHost && snaal && Object.keys(hostConns).length > 0) {
+        doSnaalTransfer();
+        // Wait 2s so HOST_TRANSFER message is fully delivered before peer closes
+        setTimeout(()=>{ resetPeer(); roomUsers={}; pubKeys={}; isHost=false; isAdmin=false; isMod=false; roomLocked=false; roomPassword=''; pinnedMsg=''; burnSecs=0; snaal=false; document.getElementById('messages').innerHTML=''; hidePin(); goLobby(); }, 2000);
+      } else {
+        setTimeout(()=>{ resetPeer(); roomUsers={}; pubKeys={}; isHost=false; isAdmin=false; isMod=false; roomLocked=false; roomPassword=''; pinnedMsg=''; burnSecs=0; document.getElementById('messages').innerHTML=''; hidePin(); goLobby(); }, 600);
+      }
+      break;
+
+    case '/mute':
+      if (!arg1){ addMsg('Usage: /mute <user>','sys err'); break; }
+      if (arg1===myUsername){ addMsg('Cannot mute yourself.','sys err'); break; }
+      if (arg1===roomHostName){ addMsg('Cannot mute the Host.','sys err'); break; }
+      if (!roomUsers[arg1]){ addMsg('User not found: '+arg1,'sys err'); break; }
+      localMuted.add(arg1);
+      addMsg(arg1+' muted locally.','sys ok');
+      break;
+
+    case '/unmute':
+      if (!arg1){ addMsg('Usage: /unmute <user>','sys err'); break; }
+      localMuted.delete(arg1);
+      addMsg(arg1+' unmuted.','sys ok');
+      break;
+
+    case '/msg': {
+      const to=arg1, txt=parts.slice(2).join(' ');
+      if (!to||!txt){ addMsg('Usage: /msg <user> <message>','sys err'); break; }
+      if (!roomUsers[to]){ addMsg('User not found: '+to,'sys err'); break; }
+      if (to===myUsername){ addMsg('Cannot DM yourself.','sys err'); break; }
+      sendDM(to, txt);
+      break;
+    }
+
+    case '/kick':
+      if (!isAdmin&&!isMod){ addMsg('Permission denied.','sys err'); sfx('err'); break; }
+      if (!arg1){ addMsg('Usage: /kick <user>','sys err'); break; }
+      doKick(arg1); break;
+
+    case '/ban':
+      if (!isAdmin&&!isMod){ addMsg('Permission denied.','sys err'); sfx('err'); break; }
+      if (!arg1){ addMsg('Usage: /ban <user>','sys err'); break; }
+      doBan(arg1); break;
+
+    case '/unban':
+      if (!isAdmin&&!isMod){ addMsg('Permission denied.','sys err'); sfx('err'); break; }
+      if (!arg1){ addMsg('Usage: /unban <user>','sys err'); break; }
+      doUnban(arg1); break;
+
+    case '/promote':
+      if (!needAdmin()) break;
+      if (!arg1){ addMsg('Usage: /promote <user>','sys err'); break; }
+      doPromote(arg1); break;
+
+    // /set — grouped settings command
+    case '/set': {
+      const sub = arg1 ? arg1.toLowerCase() : '';
+      const val = parts.slice(2).join(' ');
+
+      if (sub==='mod')    { if(!needAdmin()) break; if(!val){ addMsg('Usage: /set mod <user>','sys err'); break; } doMod(val,true); break; }
+      if (sub==='demod')  { if(!needAdmin()) break; if(!val){ addMsg('Usage: /set demod <user>','sys err'); break; } doMod(val,false); break; }
+      if (sub==='promote'){ if(!needAdmin()) break; if(!val){ addMsg('Usage: /set promote <user>','sys err'); break; } doPromote(val); break; }
+
+      if (sub==='lock')   { if(!needHost()) break; roomLocked=true;  updateBadges(); addMsg('Room LOCKED.','sys warn'); broadcast({type:'ROOM_LOCK',val:true});  break; }
+      if (sub==='unlock') { if(!needHost()) break; roomLocked=false; updateBadges(); addMsg('Room UNLOCKED.','sys ok'); broadcast({type:'ROOM_LOCK',val:false}); break; }
+
+      if (sub==='pass') {
+        if(!needHost()) break;
+        if(!val){ addMsg('Usage: /set pass <password> or /set pass 0','sys err'); break; }
+        if(val==='0'){ roomPassword=''; updateBadges(); addMsg('Password removed.','sys ok'); }
+        else { roomPassword=val; updateBadges(); addMsg('Password set.','sys ok'); }
+        break;
+      }
+      if (sub==='max') {
+        if(!needHost()) break;
+        const n=parseInt(val);
+        if(isNaN(n)||n<0){ addMsg('Usage: /set max <number>','sys err'); break; }
+        maxUsers=n; addMsg('Max users: '+(n===0?'unlimited':n)+'.','sys ok'); break;
+      }
+      if (sub==='roomcode') {
+        if(!needHost()) break;
+        if(!val){ addMsg('Usage: /set roomcode <code> or /set roomcode r','sys err'); break; }
+        const nc = val.toUpperCase()==='R' ? genCode() : val.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,8);
+        if(nc.length<4){ addMsg('Code must be at least 4 characters.','sys err'); break; }
+        if(nc===roomCode){ addMsg('Already using that code.','sys err'); break; }
+        migrateRoom(nc); break;
+      }
+      addMsg('Unknown /set option. Type /help.','sys err');
+      break;
+    }
+
+    // legacy aliases — redirect to /set
+    case '/setpass':    addMsg('Use /set pass instead.','sys warn'); break;
+    case '/setmaxuser': addMsg('Use /set max instead.','sys warn'); break;
+    case '/setroomcode':addMsg('Use /set roomcode instead.','sys warn'); break;
+    case '/lock':       addMsg('Use /set lock instead.','sys warn'); break;
+    case '/unlock':     addMsg('Use /set unlock instead.','sys warn'); break;
+    case '/mod':        addMsg('Use /set mod instead.','sys warn'); break;
+    case '/demod':      addMsg('Use /set demod instead.','sys warn'); break;
+
+    case '/burn': {
+      if (!arg1){ addMsg('Usage: /burn <seconds> or /burn off','sys err'); break; }
+      if (arg1==='off'){ burnSecs=0; addMsg('Burn mode OFF.','sys ok'); break; }
+      const s=parseInt(arg1);
+      if (isNaN(s)||s<1||s>3600){ addMsg('Seconds must be between 1-3600.','sys err'); break; }
+      burnSecs=s;
+      addMsg('Burn mode ON — '+s+'s. Screen only — recipients can still screenshot.','sys warn');
+      break;
+    }
+
+    case '/pin': {
+      if (!isAdmin&&!isMod){ addMsg('Permission denied.','sys err'); break; }
+      const txt=parts.slice(1).join(' ');
+      if (!txt){ addMsg('Usage: /pin <message>','sys err'); break; }
+      pinnedMsg=txt;
+      showPin(txt);
+      if (isHost)        broadcast({ type:'PIN', text:txt });
+      else if (hostConn) hostConn.send({ type:'PIN', text:txt });
+      break;
+    }
+
+    case '/unpin': {
+      if (!isAdmin&&!isMod){ addMsg('Permission denied.','sys err'); break; }
+      pinnedMsg='';
+      hidePin();
+      if (isHost)        broadcast({ type:'UNPIN' });
+      else if (hostConn) hostConn.send({ type:'UNPIN' });
+      break;
+    }
+
+    default:
+      addMsg('Unknown command: '+cmd+' — /help','sys err');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DM (encrypted)
+// ═══════════════════════════════════════════════════════════
+async function sendDM(to, text) {
+  const pubKey = pubKeys[to];
+  if (!pubKey) { addMsg('No encryption key for '+to+'. Try again shortly.','sys err'); return; }
+  try {
+    const ct = await Crypto.encryptDM(text, pubKey);
+    addMsg('[DM → '+to+'] '+text,'sys');
+    if (isHost)        sendTo(to, { type:'DM_ENC', from:myUsername, ct });
+    else if (hostConn) hostConn.send({ type:'DM_RELAY', to, ct });
+  } catch(e){ addMsg('DM encryption failed.','sys err'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ADMIN / MOD ACTIONS
+// ═══════════════════════════════════════════════════════════
+function needAdmin() {
+  if (!isAdmin){ addMsg('Permission denied.','sys err'); sfx('err'); return false; }
+  if (!isHost) { addMsg('Admin commands require HOST role.','sys err'); sfx('err'); return false; }
+  return true;
+}
+function showPin(text) {
+  document.getElementById('pin-bar').style.display = 'block';
+  document.getElementById('pin-text').textContent  = text;
+  addMsg('[PIN] '+text,'sys warn');
+}
+function hidePin() {
+  document.getElementById('pin-bar').style.display = 'none';
+  document.getElementById('pin-text').textContent  = '';
+  addMsg('[PIN] Removed.','sys');
+}
+
+// SNAAL — transfer host to oldest connected peer
+function doSnaalTransfer() {
+  const pids = Object.keys(hostConns);
+  if (pids.length === 0) return;
+  const newHostPid  = pids[0];
+  const newHostData = hostPeerData[newHostPid];
+  if (!newHostData) return;
+  const newHostName = newHostData.username;
+  roomUsers[newHostName].isAdmin = true;
+  roomHostName = newHostName;
+  broadcast({ type:'SYNC', users:roomUsers, hostName: roomHostName });
+  sendTo(newHostName, { type:'HOST_TRANSFER', roomCode, password:roomPassword, locked:roomLocked, maxUsers, bannedNames:[...bannedNames], pin:pinnedMsg });
+  addMsg(newHostName+' is now the new HOST.','sys warn');
+}
+
+function needHost() {
+  if (!isHost){ addMsg('Host-only command.','sys err'); sfx('err'); return false; }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ROOM MIGRATION
+// ═══════════════════════════════════════════════════════════
+async function migrateRoom(newCode) {
+  addMsg('Checking if code '+newCode+' is available...','sys');
+
+  // Try to connect to see if that ID is already taken
+  const testPeer = makePeer();
+  let available  = false;
+
+  await new Promise(resolve => {
+    testPeer.on('open', () => {
+      const testConn = testPeer.connect('AGORA-'+newCode, { reliable:false });
+      const timeout  = setTimeout(()=>{ available=true; resolve(); }, 2000);
+      testConn.on('open', ()=>{ clearTimeout(timeout); available=false; resolve(); });
+      testConn.on('error', ()=>{ clearTimeout(timeout); available=true; resolve(); });
+    });
+    testPeer.on('error', ()=>{ available=true; resolve(); });
+    setTimeout(()=>{ available=true; resolve(); }, 3000);
+  });
+
+  try { testPeer.destroy(); } catch(e){}
+
+  if (!available) {
+    addMsg('Code '+newCode+' is already in use. Choose another.','sys err');
+    sfx('err'); return;
+  }
+
+  addMsg('Code available. Migrating room to '+newCode+'...','sys warn');
+  shakeBody();
+
+  // Snapshot current state
+  const snapshot = {
+    password:   roomPassword,
+    locked:     roomLocked,
+    maxUsers,
+    bannedNames: [...bannedNames],
+  };
+
+  // Notify all clients — they will reconnect
+  broadcast({ type:'ROOM_MIGRATE', newCode, snapshot });
+  await wait(400);
+
+  // Destroy old peer, open new one with new code
+  const oldConns = { ...hostConns };
+  for (const c of Object.values(oldConns)) { try{ c.close(); }catch(e){} }
+
+  if (peer) { try{ peer.destroy(); }catch(e){} peer=null; }
+  hostConns={}; hostPeerData={};
+  roomUsers={}; pubKeys={};
+
+  roomCode     = newCode;
+  roomPassword = snapshot.password;
+  roomLocked   = snapshot.locked;
+  maxUsers     = snapshot.maxUsers;
+  bannedNames  = new Set(snapshot.bannedNames);
+
+  peer = makePeer('AGORA-'+newCode);
+  peer.on('open', id => {
+    myId = id;
+    roomUsers[myUsername] = { peerId:id, isAdmin:true, isMod:false };
+    pubKeys[myUsername]   = Crypto.myPubKey;
+    updateBadges(); renderUsers();
+    addMsg('Room migrated to '+newCode+'. Waiting for peers to reconnect...','sys ok');
+  });
+  peer.on('connection',  handleIncoming);
+  peer.on('error',       e => addMsg('Peer error: '+e.message,'sys err'));
+  peer.on('disconnected',()=>{ if(peer) peer.reconnect(); });
+}
+
+function doKick(uname) {
+  if (uname===myUsername){ addMsg('Cannot kick yourself.','sys err'); return; }
+  if (uname===roomHostName){ addMsg('Cannot target the Host.','sys err'); return; }
+  if (!roomUsers[uname]) { addMsg('User not found: '+uname,'sys err'); return; }
+  if (!isAdmin&&isMod&&roomUsers[uname].isAdmin){ addMsg('Cannot kick an admin.','sys err'); return; }
+  if (isHost) {
+    sendTo(uname,{type:'KICKED'});
+    const pid=roomUsers[uname].peerId;
+    setTimeout(()=>{ if(hostConns[pid]) hostConns[pid].close(); },400);
+    broadcast({type:'SYS',text:uname+' was kicked.',cls:'sys warn'});
+    addMsg(uname+' was kicked.','sys warn');
+  } else if (hostConn) {
+    hostConn.send({type:'MOD_ACTION',action:'kick',target:uname});
+    addMsg('Kick request sent.','sys warn');
+  }
+}
+
+function doBan(uname) {
+  if (uname===myUsername){ addMsg('Cannot ban yourself.','sys err'); return; }
+  if (uname===roomHostName){ addMsg('Cannot target the Host.','sys err'); return; }
+  if (!roomUsers[uname]) { addMsg('User not found: '+uname,'sys err'); return; }
+  if (!isAdmin&&isMod&&roomUsers[uname].isAdmin){ addMsg('Cannot ban an admin.','sys err'); return; }
+  if (isHost) {
+    bannedNames.add(uname);
+    const pid=roomUsers[uname].peerId;
+    if(hostPeerData[pid]) hostPeerData[pid].banned=true;
+    sendTo(uname,{type:'BANNED'});
+    setTimeout(()=>{ if(hostConns[pid]) hostConns[pid].close(); },400);
+    broadcast({type:'SYS',text:uname+' was banned.',cls:'sys err'});
+    addMsg(uname+' was banned.','sys err');
+  } else if (hostConn) {
+    hostConn.send({type:'MOD_ACTION',action:'ban',target:uname});
+    addMsg('Ban request sent.','sys err');
+  }
+}
+
+function doUnban(uname) {
+  if (!isHost){ addMsg('Only host can unban.','sys err'); return; }
+  bannedNames.delete(uname);
+  Object.values(hostPeerData).forEach(d=>{ if(d.username===uname) d.banned=false; });
+  addMsg(uname+' unbanned.','sys ok');
+}
+
+function doPromote(uname) {
+  if (!roomUsers[uname]){ addMsg('User not found: '+uname,'sys err'); return; }
+  roomUsers[uname].isAdmin=true; roomUsers[uname].isMod=false;
+  roomUsers[uname].grantedBy = myUsername; // track who promoted
+  sendTo(uname,{type:'PROMOTED'});
+  broadcast({type:'SYNC',users:roomUsers, hostName: roomHostName});
+  addMsg(uname+' promoted to ADMIN.','sys ok'); renderUsers();
+}
+
+function doDemoteAdmin(uname) {
+  if (!roomUsers[uname]){ addMsg('User not found: '+uname,'sys err'); return; }
+  if (uname===roomHostName){ addMsg('Cannot demote Host.','sys err'); return; }
+  if (!roomUsers[uname].isAdmin){ addMsg(uname+' is not an admin.','sys err'); return; }
+  if (roomUsers[uname].peerId === myId){ addMsg('Cannot demote yourself.','sys err'); return; }
+  if (!isHost && roomUsers[uname].grantedBy !== myUsername) {
+    addMsg('You can only revoke admin from users you promoted.','sys err'); return;
+  }
+  roomUsers[uname].isAdmin=false; roomUsers[uname].grantedBy=null;
+  sendTo(uname,{type:'DEMOTED'});
+  broadcast({type:'SYNC',users:roomUsers, hostName: roomHostName});
+  addMsg(uname+' admin revoked.','sys warn'); renderUsers();
+}
+
+function doMod(uname,grant) {
+  if (!roomUsers[uname]){ addMsg('User not found: '+uname,'sys err'); return; }
+  if (roomUsers[uname].isAdmin){ addMsg('Admins cannot be modded.','sys err'); return; }
+  roomUsers[uname].isMod=grant;
+  const pid=roomUsers[uname].peerId;
+  if(hostPeerData[pid]) hostPeerData[pid].isMod=grant;
+  sendTo(uname,{type:grant?'MOD_GRANTED':'MOD_REVOKED'});
+  broadcast({type:'SYNC',users:roomUsers, hostName: roomHostName});
+  addMsg(uname+(grant?' granted MOD.'  :' removed from MOD.'),'sys ok'); renderUsers();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+function getUser() {
+  const v=document.getElementById('l-user').value.trim()
+    .replace(/[^a-zA-Z0-9_\-çÇğĞıİöÖşŞüÜ]/g,'').substring(0,20);
+  if (!v){ setLobbyStatus('USERNAME CANNOT BE EMPTY',true); return null; }
+  return v;
+}
+
+function uniqueName(base) {
+  if (!roomUsers[base]) return base;
+  let i=1;
+  while (roomUsers[`${base}(${i})`]) i++;
+  return `${base}(${i})`;
+}
+
+function resetPeer() {
+  if (peer){ try{ peer.destroy(); }catch(e){} peer=null; }
+  hostConn=null; pubKeys={};
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GHOST UI
+// ═══════════════════════════════════════════════════════════
+
+// ── CONNECTING SCREEN ─────────────────────────────────────
+function showConnecting(title) {
+  const t = document.getElementById('conn-title');
+  if (t) t.textContent = title || 'CONNECTING';
+  document.getElementById('conn-room').textContent = '';
+  document.getElementById('conn-status').textContent = '';
+  document.getElementById('conn-warning').style.display = 'none';
+  showScreen('s-connecting');
+}
+
+function connStatus(msg) {
+  const el = document.getElementById('conn-status');
+  if (el) el.textContent = msg;
+}
+
+function showConnWarning(msg) {
+  const el = document.getElementById('conn-warning');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+// ── USER PICKER ───────────────────────────────────────────
+let _pickerResolve = null;
+
+function showUserPicker(title, excludeSelf=true) {
+  return new Promise(resolve => {
+    _pickerResolve = resolve;
+    document.getElementById('picker-title').textContent = title;
+    document.getElementById('picker-search').value = '';
+    document.getElementById('picker-overlay').style.display = 'flex';
+    renderPickerList('');
+    setTimeout(()=>document.getElementById('picker-search').focus(), 50);
+  });
+}
+
+function renderPickerList(query) {
+  const list = document.getElementById('picker-list');
+  list.innerHTML = '';
+  const users = Object.entries(roomUsers).filter(([u])=> u !== myUsername && u.toLowerCase().includes(query.toLowerCase()));
+  if (users.length === 0) {
+    const el = document.createElement('div');
+    el.style.cssText = 'padding:10px 0;font-size:11px;color:rgba(255,255,255,0.2);text-align:center';
+    el.textContent = query ? 'no match' : 'no users';
+    list.appendChild(el);
+    return;
+  }
+  users.forEach(([u, d]) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:10px 8px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.55);border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:8px;transition:all .1s';
+    row.onmouseover = ()=>{ row.style.background='rgba(255,255,255,0.04)'; row.style.color='rgba(255,255,255,0.85)'; };
+    row.onmouseout  = ()=>{ row.style.background=''; row.style.color='rgba(255,255,255,0.55)'; };
+
+    const dot = document.createElement('span');
+    dot.style.cssText = 'width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0';
+    const name = document.createElement('span');
+    name.textContent = u + (u===roomHostName?' [HOST]': d.isAdmin?' [A]': d.isMod?' [M]':'');
+
+    row.appendChild(dot); row.appendChild(name);
+    row.onclick = () => {
+      document.getElementById('picker-overlay').style.display = 'none';
+      if (_pickerResolve) { _pickerResolve(u); _pickerResolve = null; }
+      setTimeout(()=>document.getElementById('msg-in').focus(), 100);
+    };
+    list.appendChild(row);
+  });
+}
+
+function pickerCancel() {
+  document.getElementById('picker-overlay').style.display = 'none';
+  if (_pickerResolve) { _pickerResolve(null); _pickerResolve = null; }
+  setTimeout(()=>document.getElementById('msg-in').focus(), 100);
+}
+
+// ── THEME ────────────────────────────────────────────────
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('agora-theme', t);
+  document.querySelectorAll('.d-theme-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.t===t);
+  });
+}
+
+// Toast notifications
+function toast(msg, type='ok', duration=2500) {
+  const box = document.getElementById('toast-wrap');
+  const el  = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'fadeOut .3s forwards';
+    setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 300);
+  }, duration);
+}
+
+// Drawer
+function toggleDrawer() {
+  const d  = document.getElementById('drawer');
+  const tr = document.getElementById('drawer-trigger');
+  const ov = document.getElementById('drawer-overlay');
+  const open = d.classList.contains('open');
+  if (open) closeDrawer();
+  else {
+    d.classList.add('open');
+    tr.classList.add('open');
+    ov.classList.add('open');
+    updateDrawer();
+    document.getElementById('msg-in').blur();
+  }
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-trigger').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  setTimeout(()=>document.getElementById('msg-in').focus(), 100);
+}
+
+function updateDrawer() {
+  document.getElementById('d-room').textContent = roomCode||'----';
+  document.getElementById('d-user').textContent = myUsername||'--';
+  document.getElementById('d-badge-admin').style.display  = isAdmin  ? 'inline':'none';
+  document.getElementById('d-badge-mod').style.display    = (isMod&&!isAdmin) ? 'inline':'none';
+  document.getElementById('d-badge-locked').style.display = roomLocked ? 'inline':'none';
+  document.getElementById('d-badge-pass').style.display   = (isHost&&roomPassword) ? 'inline':'none';
+  const modSec   = document.getElementById('d-mod-sec');
+  const adminSec = document.getElementById('d-admin-sec');
+  const hostSec  = document.getElementById('d-host-sec');
+  if (modSec)   modSec.style.display   = (isAdmin||isMod) ? 'block':'none';
+  if (adminSec) adminSec.style.display = isAdmin ? 'block':'none';
+  if (hostSec)  hostSec.style.display  = isHost  ? 'block':'none';
+
+  const all = Object.keys(roomUsers).filter(u=>u!==myUsername);
+  const enc = all.length===0 || all.every(u=>!!pubKeys[u]);
+  const encEl = document.getElementById('d-enc');
+  encEl.textContent = enc ? '[ENC]' : '[PARTIAL]';
+  encEl.className   = 'd-enc' + (enc ? ' on' : '');
+
+  renderDrawerUsers();
+}
+
+async function renderDrawerUsers() {
+  const list = document.getElementById('d-users');
+  list.innerHTML = '';
+  for (const [u,d] of Object.entries(roomUsers)) {
+    const row = document.createElement('div');
+    row.className = 'du-row';
+
+    const dot = document.createElement('span');
+    dot.className = 'du-dot';
+    if (!pubKeys[u]) { dot.style.background='#1a1a1a'; dot.style.boxShadow='none'; }
+
+    const name = document.createElement('span');
+    name.className = 'du-name';
+    
+    // RAINBOW HOST LOGIC
+    if (u === roomHostName) {
+      name.textContent = u + ' [HOST]';
+      name.classList.add('rainbow-tag');
+    } else {
+      name.textContent = u + (d.isAdmin?' [A]': d.isMod?' [M]':'');
+      name.style.color = d.isAdmin ? 'rgba(255,204,0,0.5)' : d.isMod ? 'rgba(255,51,51,0.5)' : '#333';
+    }
+
+    const fp = document.createElement('span');
+    fp.className = 'du-fp';
+    const pd = isHost ? Object.values(hostPeerData).find(p=>p.username===u) : null;
+    const raw = pd ? pd.pubKeyRaw : (u===myUsername ? Crypto.myPubKeyRaw : null);
+    if (raw) {
+      getFingerprint(raw).then(f => { fp.textContent = f; });
+    }
+
+    row.appendChild(dot); row.appendChild(name); row.appendChild(fp);
+    list.appendChild(row);
+  }
+}
+
+// Popup
+let _popupResolve = null;
+
+function showPopup(title, placeholder='') {
+  return new Promise(resolve => {
+    _popupResolve = resolve;
+    document.getElementById('popup-title').textContent = title;
+    document.getElementById('popup-input').placeholder = placeholder;
+    document.getElementById('popup-input').value = '';
+    document.getElementById('popup-overlay').classList.add('active');
+    setTimeout(() => document.getElementById('popup-input').focus(), 50);
+  });
+}
+
+function popupConfirm() {
+  const val = document.getElementById('popup-input').value.trim();
+  document.getElementById('popup-overlay').classList.remove('active');
+  if (_popupResolve) { _popupResolve(val); _popupResolve = null; }
+  setTimeout(()=>document.getElementById('msg-in').focus(), 100);
+}
+
+function popupCancel() {
+  document.getElementById('popup-overlay').classList.remove('active');
+  if (_popupResolve) { _popupResolve(null); _popupResolve = null; }
+  setTimeout(()=>document.getElementById('msg-in').focus(), 100);
+}
+
+// Drawer command handlers
+async function drawerCmd(action) {
+  closeDrawer();
+  await wait(200);
+
+  switch(action) {
+    case 'clear':
+      document.getElementById('messages').innerHTML='';
+      toast('Screen cleared.','ok');
+      break;
+
+    case 'users': {
+      const lines = Object.entries(roomUsers).map(([u,d])=>{
+        let s = u;
+        if(d.isAdmin) s+=' [A]'; if(d.isMod) s+=' [M]';
+        return s;
+      });
+      toast(lines.join('  |  ')||'(empty)', 'ok', 3500);
+      break;
+    }
+
+    case 'burn': {
+      const val = await showPopup('BURN TIMER', 'seconds (0=off)');
+      if (val===null) break;
+      if (val==='0'||val==='off') { burnSecs=0; toast('Burn OFF.','ok'); }
+      else { const s=parseInt(val); if(!isNaN(s)&&s>0){ burnSecs=s; toast('Burn ON — '+s+'s','warn'); } }
+      break;
+    }
+
+    case 'msg': {
+      const to = await showPopup('DM TO', 'username');
+      if (!to) break;
+      if (!roomUsers[to]) { toast('User not found: '+to,'err'); break; }
+      const txt = await showPopup('MESSAGE TO ' + to.toUpperCase(), 'message');
+      if (!txt) break;
+      sendDM(to, txt);
+      break;
+    }
+
+    case 'exit':
+      addMsg('Leaving room...','sys warn');
+      setTimeout(()=>{ resetPeer(); roomUsers={}; pubKeys={}; isHost=false; isAdmin=false; isMod=false; roomLocked=false; roomPassword=''; pinnedMsg=''; burnSecs=0; document.getElementById('messages').innerHTML=''; goLobby(); },600);
+      break;
+
+    case 'kick': {
+      const u = await showUserPicker('KICK USER');
+      if (!u) break;
+      doKick(u);
+      break;
+    }
+
+    case 'ban': {
+      const u = await showUserPicker('BAN USER');
+      if (!u) break;
+      doBan(u);
+      break;
+    }
+
+    case 'mute': {
+      const u = await showUserPicker('MUTE LOCALLY');
+      if (!u) break;
+      if (u === roomHostName) { toast('Cannot mute the Host.','err'); break; }
+      localMuted.add(u); toast(u+' muted locally.','ok');
+      break;
+    }
+
+    case 'pin': {
+      const txt = await showPopup('PIN MESSAGE', 'message to pin');
+      if (!txt) break;
+      pinnedMsg=txt; showPin(txt);
+      if(isHost)        broadcast({type:'PIN',text:txt});
+      else if(hostConn) hostConn.send({type:'PIN',text:txt});
+      break;
+    }
+
+    case 'unpin':
+      pinnedMsg=''; hidePin();
+      if(isHost)        broadcast({type:'UNPIN'});
+      else if(hostConn) hostConn.send({type:'UNPIN'});
+      break;
+
+    case 'promote': {
+      const u = await showUserPicker('PROMOTE TO ADMIN');
+      if (!u) break;
+      doPromote(u);
+      break;
+    }
+
+    case 'setmod': {
+      const u = await showUserPicker('GRANT MODERATOR');
+      if (!u) break;
+      doMod(u,true);
+      break;
+    }
+
+    case 'demod': {
+      const u = await showUserPicker('REMOVE MODERATOR');
+      if (!u) break;
+      doMod(u,false);
+      break;
+    }
+
+    case 'revokeadmin': {
+      const u = await showUserPicker('REVOKE ADMIN');
+      if (!u) break;
+      doDemoteAdmin(u);
+      break;
+    }
+
+    case 'lock':
+      roomLocked=true; updateBadges();
+      toast('Room LOCKED.','warn');
+      broadcast({type:'ROOM_LOCK',val:true});
+      break;
+
+    case 'unlock':
+      roomLocked=false; updateBadges();
+      toast('Room UNLOCKED.','ok');
+      broadcast({type:'ROOM_LOCK',val:false});
+      break;
+
+    case 'setpass': {
+      const p = await showPopup('SET PASSWORD', 'password (0 to remove)');
+      if (p===null) break;
+      if (p==='0') { roomPassword=''; updateBadges(); toast('Password removed.','ok'); }
+      else { roomPassword=p; updateBadges(); toast('Password set.','ok'); }
+      break;
+    }
+
+    case 'setmax': {
+      const n = await showPopup('MAX USERS', 'number (0=unlimited)');
+      if (n===null) break;
+      const num=parseInt(n);
+      if (!isNaN(num)&&num>=0) { maxUsers=num; toast('Max users: '+(num===0?'unlimited':num),'ok'); }
+      break;
+    }
+
+    case 'setroomcode': {
+      const nc = await showPopup('NEW ROOM CODE', 'code or r for random');
+      if (!nc) break;
+      const code = nc.toUpperCase()==='R' ? genCode() : nc.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,8);
+      if (code.length<4) { toast('Code too short.','err'); break; }
+      migrateRoom(code);
+      break;
+    }
+    
+    case 'transferhost': {
+      if (!isHost) break;
+      const u = await showUserPicker('TRANSFER OWNERSHIP TO');
+      if (!u || u === myUsername) break;
+      if (confirm('Transfer host crown to '+u+'? You will become a regular admin.')) {
+        roomUsers[u].isAdmin = true;
+        roomHostName = u;
+        broadcast({ type:'SYNC', users:roomUsers, hostName: roomHostName });
+        sendTo(u, { type:'HOST_TRANSFER', roomCode, password:roomPassword, locked:roomLocked, maxUsers, bannedNames:[...bannedNames], pin:pinnedMsg });
+        isHost = false; 
+        addMsg('Crown transferred to '+u+'. You are no longer Host.','sys warn');
+        updateDrawer();
+      }
+      break;
+    }
+  }
+}
+
+// Message fade — old messages fade over time
+function scheduleFade() {
+  setInterval(() => {
+    const msgs = document.getElementById('messages');
+    const children = Array.from(msgs.children);
+    const total = children.length;
+    if (total <= 8) return;
+    // Fade messages older than the last 8
+    children.slice(0, total-8).forEach(el => {
+      if (!el.classList.contains('faded')) el.classList.add('faded');
+    });
+  }, 5000);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════
+
+// ── ROOM NOT FOUND ────────────────────────────────────────
+function showRoomNotFound(msg) {
+  const sub = document.getElementById('notfound-sub');
+  if (sub) sub.textContent = msg || 'No active room found with this code.';
+  showScreen('s-notfound');
+}
+
+function notFoundBack() {
+  showScreen('s-lobby');
+  document.getElementById('l-code').value = '';
+  document.getElementById('l-user').focus();
+}
+
+
+// ── HELP MODAL ────────────────────────────────────────────
+const HELP_CONTENT = {
+  en: {
+    title: 'HOW TO USE AGORA',
+    sections: [
+      {
+        heading: 'GETTING STARTED',
+        steps: [
+          'Enter a username — this is how others will see you.',
+          'Click CREATE NEW ROOM to start a private room. You will be the host.',
+          'Share the room code with people you trust.',
+          'Others click JOIN ROOM and enter the code to connect.',
+        ],
+        note: 'No account needed. No data stored. Session ends when you close the tab.'
+      },
+      {
+        heading: 'SECURITY',
+        steps: [
+          'All messages are E2E encrypted (RSA-2048 + AES-256-GCM).',
+          'No server reads your messages — only peers in the room can decrypt them.',
+          'WebRTC may expose your IP to other peers. Use a VPN for full anonymity.',
+          'Check the fingerprint [ENC:xxxx] in the user list to verify identities.',
+        ],
+        note: 'Burn timer removes messages from screen only — peers can still screenshot.'
+      },
+      {
+        heading: 'COMMANDS',
+        steps: [
+          '/burn <sec> — auto-delete messages after N seconds.',
+          "/mute <user> — hide a user's messages locally.",
+          '/msg <user> <text> — send a private encrypted DM.',
+          'Host commands: /set lock, /set pass, /set roomcode r',
+        ],
+        note: 'Open the drawer menu (top left) for all options.'
+      }
+    ]
+  },
+  tr: {
+    title: 'AGORA NASIL KULLANILIR',
+    sections: [
+      {
+        heading: 'BAŞLARKEN',
+        steps: [
+          'Bir kullanıcı adı gir — diğerleri seni bu isimle görecek.',
+          'ODA OLUŞTUR butonuna tıkla. Oda sahibi (host) sen olursun.',
+          'Oda kodunu güvendiğin kişilerle paylaş.',
+          "Diğerleri ODA'YA KATIL seçeneğiyle kodu girerek bağlanır.",
+        ],
+        note: 'Hesap gerekmez. Veri saklanmaz. Sekmeyi kapattığında oturum sona erer.'
+      },
+      {
+        heading: 'GÜVENLİK',
+        steps: [
+          'Tüm mesajlar uçtan uca şifreli (RSA-2048 + AES-256-GCM).',
+          'Hiçbir sunucu mesajlarını okuyamaz — sadece odadaki kullanıcılar çözebilir.',
+          'WebRTC, IP adresini diğer kullanıcılara açık edebilir. Tam anonimlik için VPN kullan.',
+          'Kullanıcı listesindeki parmak izi [ENC:xxxx] ile kimlikleri doğrula.',
+        ],
+        note: 'Burn timer mesajları yalnızca ekrandan siler — karşı taraf hâlâ ekran görüntüsü alabilir.'
+      },
+      {
+        heading: 'KOMUTLAR',
+        steps: [
+          '/burn <saniye> — mesajları N saniye sonra otomatik sil.',
+          '/mute <kullanıcı> — bir kullanıcının mesajlarını yerel olarak gizle.',
+          '/msg <kullanıcı> <metin> — şifreli özel mesaj gönder.',
+          'Host komutları: /set lock, /set pass, /set roomcode r',
+        ],
+        note: 'Tüm seçenekler için sol üstteki çekmece menüsünü aç.'
+      }
+    ]
+  },
+  ja: {
+    title: 'AGORAの使い方',
+    sections: [
+      {
+        heading: 'はじめに',
+        steps: [
+          'ユーザー名を入力してください — 他のユーザーに表示される名前です。',
+          '「部屋を作成」をクリックしてプライベートルームを開始します。あなたがホストになります。',
+          '信頼できる人にルームコードを共有してください。',
+          '他の人は「部屋に参加」でコードを入力して接続します。',
+        ],
+        note: 'アカウント不要。データは保存されません。タブを閉じるとセッションが終了します。'
+      },
+      {
+        heading: 'セキュリティ',
+        steps: [
+          'すべてのメッセージはE2E暗号化されています（RSA-2048 + AES-256-GCM）。',
+          'サーバーはメッセージを読めません — 部屋の参加者のみ復号できます。',
+          'WebRTCにより他の参加者にIPアドレスが見える場合があります。完全な匿名性にはVPNを使用してください。',
+          'ユーザーリストのフィンガープリント [ENC:xxxx] で本人確認ができます。',
+        ],
+        note: 'バーンタイマーは画面からのみメッセージを削除します — スクリーンショットは防げません。'
+      },
+      {
+        heading: 'コマンド',
+        steps: [
+          '/burn <秒> — N秒後にメッセージを自動削除。',
+          '/mute <ユーザー> — そのユーザーのメッセージをローカルで非表示。',
+          '/msg <ユーザー> <テキスト> — 暗号化されたDMを送信。',
+          'ホストコマンド: /set lock, /set pass, /set roomcode r',
+        ],
+        note: '左上のドロワーメニューからすべてのオプションにアクセスできます。'
+      }
+    ]
+  },
+  zh: {
+    title: 'AGORA使用指南',
+    sections: [
+      {
+        heading: '开始使用',
+        steps: [
+          '输入用户名 — 这是其他人看到你的名字。',
+          '点击"创建房间"开始私人房间。你将成为房主。',
+          '将房间码分享给你信任的人。',
+          '其他人点击"加入房间"并输入房间码即可连接。',
+        ],
+        note: '无需账号。不存储任何数据。关闭标签页后会话结束。'
+      },
+      {
+        heading: '安全性',
+        steps: [
+          '所有消息均采用端对端加密（RSA-2048 + AES-256-GCM）。',
+          '服务器无法读取消息 — 只有房间内的用户才能解密。',
+          'WebRTC可能会将你的IP地址暴露给其他用户。如需完全匿名，请使用VPN。',
+          '通过用户列表中的指纹 [ENC:xxxx] 验证身份。',
+        ],
+        note: '销毁计时器仅从屏幕删除消息 — 对方仍可截图保存。'
+      },
+      {
+        heading: '命令',
+        steps: [
+          '/burn <秒> — N秒后自动删除消息。',
+          '/mute <用户> — 在本地隐藏某用户的消息。',
+          '/msg <用户> <文本> — 发送加密私信。',
+          '房主命令: /set lock, /set pass, /set roomcode r',
+        ],
+        note: '点击左上角抽屉菜单查看所有选项。'
+      }
+    ]
+  }
+};
+
+let currentHelpLang = 'en';
+
+function openHelp() {
+  document.getElementById('help-overlay').style.display = 'flex';
+  renderHelp(currentHelpLang);
+}
+
+function closeHelp() {
+  document.getElementById('help-overlay').style.display = 'none';
+}
+
+function setHelpLang(lang) {
+  currentHelpLang = lang;
+  document.querySelectorAll('.hl-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('hl-'+lang);
+  if (btn) btn.classList.add('active');
+  renderHelp(lang);
+}
+
+function renderHelp(lang) {
+  const data = HELP_CONTENT[lang];
+  if (!data) return;
+  const box = document.getElementById('help-content');
+  box.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-family:VT323,monospace;font-size:24px;color:var(--accent,#00ff41);letter-spacing:3px;margin-bottom:18px';
+  title.textContent = data.title;
+  box.appendChild(title);
+
+  data.sections.forEach(sec => {
+    const section = document.createElement('div');
+    section.className = 'help-section';
+
+    const heading = document.createElement('div');
+    heading.className = 'help-title';
+    heading.textContent = sec.heading;
+    section.appendChild(heading);
+
+    sec.steps.forEach((step, i) => {
+      const row = document.createElement('div');
+      row.className = 'help-step';
+      const num = document.createElement('span');
+      num.className = 'help-num';
+      num.textContent = (i+1)+'.';
+      const txt = document.createElement('span');
+      txt.textContent = step;
+      row.appendChild(num); row.appendChild(txt);
+      section.appendChild(row);
+    });
+
+    if (sec.note) {
+      const note = document.createElement('div');
+      note.className = 'help-note';
+      note.textContent = sec.note;
+      section.appendChild(note);
+    }
+
+    box.appendChild(section);
+  });
+}
+
+// ── BLACK FLASH ───────────────────────────────────────────
+function blackFlash(duration=350) {
+  return new Promise(resolve => {
+    const el = document.getElementById('flash');
+    el.classList.add('in');
+    setTimeout(()=>{
+      el.classList.remove('in');
+      setTimeout(resolve, 350);
+    }, duration);
+  });
+}
+
+window.addEventListener('resize', fixVH);
+
+document.addEventListener('DOMContentLoaded', () => {
+  fixVH(); boot();
+
+  document.getElementById('msg-in').addEventListener('keydown', e=>{
+    if (e.key==='Enter'){ const v=e.target.value; e.target.value=''; sendMsg(v); }
+  });
+  document.getElementById('l-user').addEventListener('keydown', e=>{
+    if (e.key==='Enter') document.getElementById('l-code').focus();
+  });
+  document.getElementById('l-code').addEventListener('keydown', e=>{
+    e.target.value=e.target.value.toUpperCase();
+    if (e.key==='Enter') joinRoom();
+  });
+  document.getElementById('ov-pass').addEventListener('keydown', e=>{
+    if (e.key==='Enter') submitPass();
+  });
+
+  document.getElementById('popup-input').addEventListener('keydown', e=>{
+    if (e.key==='Enter') popupConfirm();
+    if (e.key==='Escape') popupCancel();
+  });
+
+  document.getElementById('picker-search').addEventListener('input', e=>{
+    renderPickerList(e.target.value);
+  });
+  document.getElementById('picker-search').addEventListener('keydown', e=>{
+    if (e.key==='Escape') pickerCancel();
+  });
+});
+</script>
+
+<div id="flash"></div>
+
+<div id="help-overlay" onclick="if(event.target===this)closeHelp()" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px)">
+  <div style="background:var(--bg2,#0a0a0a);border:1px solid var(--border,rgba(255,255,255,0.08));padding:28px;width:100%;max-width:480px;margin:auto;position:relative">
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button onclick="setHelpLang('en')" id="hl-en" class="hl-btn active">EN</button>
+      <button onclick="setHelpLang('tr')" id="hl-tr" class="hl-btn">TR</button>
+      <button onclick="setHelpLang('ja')" id="hl-ja" class="hl-btn">JA</button>
+      <button onclick="setHelpLang('zh')" id="hl-zh" class="hl-btn">ZH</button>
+      <button onclick="closeHelp()" style="margin-left:auto;background:transparent;border:1px solid var(--border,rgba(255,255,255,0.08));color:var(--text-dim,rgba(255,255,255,0.3));font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 10px;cursor:pointer;letter-spacing:1px">✕</button>
+    </div>
+
+    <div id="help-content"></div>
+  </div>
+</div>
+
+</body>
+</html>
